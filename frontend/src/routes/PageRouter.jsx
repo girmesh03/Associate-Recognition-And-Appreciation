@@ -2,6 +2,7 @@ import { memo } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Outlet,
   Route,
   RouterProvider,
 } from "react-router-dom";
@@ -39,11 +40,12 @@ const PageRouter = memo(() => {
         <Route
           element={
             <ProtectedRoutes>
-              <ProtectedLayout />
+              <ProtectedLayout>
+                <Outlet />
+              </ProtectedLayout>
             </ProtectedRoutes>
           }
         >
-          <Route path="home" element={<HomePage />} />
           <Route path="recognitions" element={<RecognitionsPage />} />
           <Route path="nominations" element={<NominationsPage />} />
           <Route path="profile/:userId" element={<ProfilePage />} />
