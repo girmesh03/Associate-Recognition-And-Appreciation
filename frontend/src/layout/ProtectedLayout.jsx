@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import PropTypes from "prop-types";
 import { Box, useMediaQuery } from "@mui/material";
 
 import Navbar from "../components/Navbar";
 import MuiDrawer from "../components/MuiDrawer";
 
-const ProtectedLayout = () => {
+const ProtectedLayout = ({ children }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const isNoneMobile = useMediaQuery("(min-width: 900px)");
 
@@ -36,11 +36,14 @@ const ProtectedLayout = () => {
           isNoneMobile={isNoneMobile}
           handleDrawerToggle={handleDrawerToggle}
         />
-
-        <Outlet />
+        {children}
       </Box>
     </Box>
   );
+};
+
+ProtectedLayout.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default ProtectedLayout;

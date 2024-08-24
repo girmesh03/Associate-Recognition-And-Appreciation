@@ -10,8 +10,10 @@ import {
 } from "@mui/material";
 
 import { useSelector } from "react-redux";
-import { drawerWidth } from "../utils/constants";
+
 import ProtectedNavList from "./ProtectedNavList";
+import { drawerWidth } from "../utils/constants";
+import avatar from "../assets/images/noAvatar.jpg";
 
 const MuiDrawer = ({
   open,
@@ -54,21 +56,22 @@ const MuiDrawer = ({
           backgroundRepeat: "no-repeat",
         }}
       >
-        <Stack direction="column" flex={1}>
+        <Stack direction="column" sx={{ flexGrow: 1 }}>
           <Stack
             direction="column"
             justifyContent="center"
             alignItems="center"
             spacing={1}
-            sx={{ py: 1, flex: 0 }}
+            sx={{ py: 1, flexGrow: 0 }}
           >
-            <Avatar src="noAvatar.jpg" sx={{ width: 50, height: 50 }} />
+            {/* TODO: drawer lags when open due to the avatar used */}
+            <Avatar src={avatar} sx={{ width: 50, height: 50 }} />
             <Typography variant="body2" sx={{ color: "text.primary" }}>
               {`${currentUser?.firstName} ${currentUser?.lastName}`}
             </Typography>
           </Stack>
           <Divider sx={{ my: 1 }} />
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flexGrow: 1 }}>
             <ProtectedNavList
               handleDrawerToggle={handleDrawerToggle}
               handleLogout={handleLogout}

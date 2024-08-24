@@ -1,11 +1,18 @@
 import { Outlet } from "react-router-dom";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material";
 
 const RootLayout = () => {
   return (
-    <Container maxWidth="xl" disableGutters sx={{ height: "100dvh" }}>
+    <Box
+      maxWidth="xl"
+      sx={{
+        margin: "0 auto",
+        height: "100dvh",
+        overflow: "hidden",
+      }}
+    >
       <Outlet />
-    </Container>
+    </Box>
   );
 };
 

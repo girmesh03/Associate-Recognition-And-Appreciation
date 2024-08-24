@@ -29,7 +29,7 @@ const ProtectedNavList = ({ handleDrawerToggle, handleLogout }) => {
       path: "admin",
       role: "admin",
     },
-    { title: "Home", icon: <HomeIcon />, path: "home" },
+    { title: "Home", icon: <HomeIcon />, path: "/" },
     {
       title: "Profile",
       icon: <PersonIcon />,
@@ -76,7 +76,7 @@ const ProtectedNavList = ({ handleDrawerToggle, handleLogout }) => {
     >
       {navItems.map(
         (item) =>
-          (item.role ? currentUser?.role === item.role : true) && (
+          (item?.role ? currentUser?.role === item.role : true) && (
             <ListItemButton
               key={item.path}
               component={Link}
@@ -92,12 +92,7 @@ const ProtectedNavList = ({ handleDrawerToggle, handleLogout }) => {
           )
       )}
       <Divider sx={{ mb: 2 }} />
-      <ListItemButton
-        onClick={handleLogout}
-        sx={{
-          mt: "auto",
-        }}
-      >
+      <ListItemButton onClick={handleLogout} sx={{ mt: "auto" }}>
         <ListItemIcon>
           <LogoutIcon />
         </ListItemIcon>

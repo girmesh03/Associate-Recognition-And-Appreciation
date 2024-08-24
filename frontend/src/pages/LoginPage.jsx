@@ -1,19 +1,68 @@
-import { Box, Container } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Box, Paper, Typography } from "@mui/material";
+import LoginForm from "../components/formComponents/LoginForm";
 
 const LoginPage = () => {
   return (
-    <Container
-      maxWidth="sm"
+    <Box
       sx={{
         minHeight: "100%",
         display: "flex",
-        flexDirection: "column",
+        alignItems: "center",
         justifyContent: "center",
-        pt: { xs: 7, sm: 10 },
       }}
     >
-      <Box>Login page</Box>
-    </Container>
+      <Paper
+        sx={{
+          borderRadius: 3,
+          boxShadow: 0,
+          backgroundColor: "transparent",
+          border: "1px solid",
+          borderColor: "divider",
+          width: 500,
+          m: 1,
+          p: { xs: 1, sm: 3 },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: 4,
+            py: 5,
+          }}
+        >
+          <Typography
+            variant="h5"
+            textAlign="center"
+            sx={{ fontWeight: "bold", letterSpacing: 3 }}
+          >
+            Login
+          </Typography>
+
+          <LoginForm />
+
+          <Typography
+            textAlign="center"
+            sx={{ color: "inherit", textDecoration: "none" }}
+            component={Link}
+            to="/signup"
+          >
+            Don&apos;t have an account?
+            <span
+              style={{
+                color: "#006fff",
+                marginLeft: "0.5rem",
+                cursor: "pointer",
+              }}
+            >
+              Signup
+            </span>
+          </Typography>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 

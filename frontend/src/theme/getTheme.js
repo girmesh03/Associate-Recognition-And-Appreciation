@@ -563,11 +563,14 @@ export const themeSettings = (mode) => {
           },
         },
       },
+
       MuiTextField: {
         styleOverrides: {
           root: ({ theme }) => ({
-            "& label .Mui-focused": {
-              color: "white",
+            "& label.Mui-focused": {
+              color: theme.palette.text.primary,
+              backgroundColor: theme.palette.background.paper,
+              padding: "0 4px",
             },
             "& .MuiInputBase-input": {
               boxSizing: "border-box",
