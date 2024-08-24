@@ -7,6 +7,9 @@ import { fileURLToPath } from "url";
 import morgan from "morgan";
 
 import corsOptions from "./config/corsOptions.js";
+import globalErrorHandler from "./controllers/errorController.js";
+import CustomError from "./utils/CustomError.js";
+
 import authRoutes from "./routes/authRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,23 +27,9 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 
 app.all("*", (req, res, next) => {
-  const error = new Error(`Can't find ${req.originalUrl} on this server!`);
-  error.status = "fail";
-  error.statusCode = 404;
-
-  next(error);
+  next(new CustomError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
-  err.message = err.message || "Internal Server Error";
-
-  res.status(err.statusCode).json({
-    message: err.message,
-    status: err.status,
-    stack: process.env.NODE_ENV === "production" ? null : err.stack,
-  });
-});
+app.use(globalErrorHandler);
 
 export default app;
