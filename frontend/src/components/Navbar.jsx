@@ -55,7 +55,7 @@ const Navbar = ({ isNoneMobile, handleDrawerToggle }) => {
           <Typography
             variant="h4"
             component={Link}
-            to="home"
+            to="/"
             sx={{
               fontWeight: 700,
               letterSpacing: 3,
