@@ -25,6 +25,7 @@ import { toggleMode } from "../../redux/features/auth/authSlice";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import RecognitionsIcon from "@mui/icons-material/VolunteerActivism";
 import FeaturesIcon from "@mui/icons-material/AutoAwesome";
 import TestimonialsIcon from "@mui/icons-material/ThumbUp";
 import HighlightsIcon from "@mui/icons-material/Star";
@@ -45,7 +46,7 @@ import { drawerWidth } from "../../utils/constants";
 
 const PublicNavigation = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
-  const mode = useSelector((state) => state.auth.mode);
+  const { isAuthenticated, mode } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const handleDrawerToggle = (newOpen) => () => {
@@ -72,15 +73,18 @@ const PublicNavigation = () => {
 
   return (
     <AppBar
-      position="fixed"
+      position="sticky"
       sx={{
         boxShadow: 0,
         bgcolor: "transparent",
         backgroundImage: "none",
-        mt: { xs: 0, sm: 2 },
+        mt: { xs: 0, md: 2 },
+        "& .MuiSvgIcon-root": {
+          color: "text.primary",
+        },
       }}
     >
-      <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 3 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 0, md: 3 } }}>
         <Toolbar
           variant="regular"
           sx={(theme) => ({
@@ -88,7 +92,7 @@ const PublicNavigation = () => {
             alignItems: "center",
             justifyContent: "space-between",
             flexShrink: 0,
-            borderRadius: { xs: 0, sm: "999px" },
+            borderRadius: { xs: 0, md: "999px" },
             bgcolor:
               theme.palette.mode === "light"
                 ? "rgba(255, 255, 255, 0.4)"
@@ -110,75 +114,63 @@ const PublicNavigation = () => {
               px: 0,
             }}
           >
-            <IconButton
-              onClick={handleDrawerToggle(true)}
-              variant="outlined"
-              size="small"
-              sx={{ display: { xs: "", md: "none" } }}
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={2}
+              sx={{ mr: 2 }}
             >
-              <MenuRoundedIcon />
-            </IconButton>
-            <Typography
-              variant="h4"
-              component={Link}
-              to="/"
-              sx={{
-                fontWeight: 700,
-                letterSpacing: 3,
-                fontSize: "clamp(1.5rem, 1vw, 2rem)",
-                color: "text.primary",
-                textDecoration: "none",
-                mx: 2,
+              <IconButton
+                onClick={handleDrawerToggle(true)}
+                variant="outlined"
+                size="small"
+                sx={{ display: { lg: "none" } }}
+              >
+                <MenuRoundedIcon />
+              </IconButton>
+              <Typography
+                variant="h4"
+                component={Link}
+                to="/"
+                sx={{
+                  fontWeight: 700,
+                  letterSpacing: 3,
+                  fontSize: "clamp(1.5rem, 1vw, 2rem)",
+                  color: "text.primary",
+                  textDecoration: "none",
+                  display: { xs: "none", sm: "block" },
+                }}
+              >
+                Monthmaster
+              </Typography>
+            </Stack>
+            <Box sx={{ display: { xs: "none", lg: "flex" } }}>
+              {isAuthenticated && (
+                <MenuItem
+                  component={Link}
+                  to="/recognitions"
+                  sx={{ py: "6px", px: "12px" }}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    Recognitions
+                  </Typography>
+                </MenuItem>
+              )}
 
-                display: { xs: "none", sm: "block" },
-              }}
-            >
-              Monthmaster
-            </Typography>
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              <MenuItem
-                onClick={() => scrollToSection("features")}
-                sx={{ py: "6px", px: "12px" }}
-              >
-                <Typography variant="body2" color="text.primary">
-                  Features
-                </Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => scrollToSection("testimonials")}
-                sx={{ py: "6px", px: "12px" }}
-              >
-                <Typography variant="body2" color="text.primary">
-                  Testimonials
-                </Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => scrollToSection("highlights")}
-                sx={{ py: "6px", px: "12px" }}
-              >
-                <Typography variant="body2" color="text.primary">
-                  Highlights
-                </Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => scrollToSection("pricing")}
-                sx={{ py: "6px", px: "12px" }}
-              >
-                <Typography variant="body2" color="text.primary">
-                  Pricing
-                </Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => scrollToSection("faq")}
-                sx={{ py: "6px", px: "12px" }}
-              >
-                <Typography variant="body2" color="text.primary">
-                  FAQ
-                </Typography>
-              </MenuItem>
+              {publicNavListItems.map((item) => (
+                <MenuItem
+                  key={item.title}
+                  onClick={() => scrollToSection(item.name)}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    {item.title}
+                  </Typography>
+                </MenuItem>
+              ))}
             </Box>
           </Box>
-          <Stack direction="row" alignItems="center" spacing={0.5}>
+
+          <Stack direction="row" alignItems="center" spacing={1}>
             <IconButton onClick={() => dispatch(toggleMode())}>
               {mode === "light" ? (
                 <DarkModeIcon sx={{ fontSize: "20px" }} />
@@ -189,8 +181,8 @@ const PublicNavigation = () => {
             <Box
               sx={{
                 display: { xs: "none", md: "flex" },
-                gap: 0.5,
                 alignItems: "center",
+                gap: 1,
               }}
             >
               <Button
@@ -198,7 +190,7 @@ const PublicNavigation = () => {
                 variant="text"
                 size="small"
                 component={Link}
-                to="login"
+                to="/login"
               >
                 Sign in
               </Button>
@@ -207,13 +199,14 @@ const PublicNavigation = () => {
                 variant="contained"
                 size="small"
                 component={Link}
-                to="signup"
+                to="/signup"
               >
                 Sign up
               </Button>
             </Box>
           </Stack>
-          <Box sx={{ display: { sm: "", md: "none" } }}>
+
+          <Box sx={{ display: { xs: "block", lg: "none" } }}>
             <Drawer
               open={openDrawer}
               onClose={handleDrawerToggle(false)}
@@ -223,9 +216,9 @@ const PublicNavigation = () => {
                 sx={{
                   minWidth: `${drawerWidth}px`,
                   backgroundColor: "background.paper",
-                  flexGrow: 1,
                   display: "flex",
                   flexDirection: "column",
+                  flexGrow: 1,
                   backgroundImage:
                     mode === "light"
                       ? "linear-gradient(180deg, #CEE5FD, #FBFCFE)"
@@ -236,9 +229,10 @@ const PublicNavigation = () => {
               >
                 <Typography
                   variant="h5"
+                  textAlign="center"
                   component={Link}
                   to="/"
-                  textAlign="center"
+                  onClick={handleDrawerToggle(false)}
                   sx={{
                     fontWeight: 700,
                     letterSpacing: 3,
@@ -282,6 +276,14 @@ const PublicNavigation = () => {
                       },
                     }}
                   >
+                    {isAuthenticated && (
+                      <ListItemButton component={Link} to="/recognitions">
+                        <ListItemIcon>
+                          <RecognitionsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Recognitions" />
+                      </ListItemButton>
+                    )}
                     {publicNavListItems.map((item) => (
                       <ListItemButton
                         key={item.name}
@@ -294,11 +296,9 @@ const PublicNavigation = () => {
                     <Divider sx={{ my: 1 }} />
                     <ListItemButton
                       component={Link}
-                      to="login"
+                      to="/login"
                       onClick={handleDrawerToggle(false)}
-                      sx={{
-                        mt: "auto",
-                      }}
+                      sx={{ mt: "auto" }}
                     >
                       <ListItemIcon>
                         <LoginIcon />
@@ -307,7 +307,7 @@ const PublicNavigation = () => {
                     </ListItemButton>
                     <ListItemButton
                       component={Link}
-                      to="signup"
+                      to="/signup"
                       onClick={handleDrawerToggle(false)}
                     >
                       <ListItemIcon>
