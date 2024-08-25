@@ -87,4 +87,16 @@ const login = asyncHandler(async (req, res, next) => {
   res.status(200).json(others);
 });
 
-export { signup, login };
+//@desc     Logout user
+//@route    GET /api/auth/logout
+//@access   Public
+const logout = asyncHandler(async (req, res, next) => {
+  // TODO: Add a better message upon error
+  res
+    .clearCookie("access_token")
+    .clearCookie("refresh_token")
+    .status(200)
+    .json({ message: "User logged out" });
+});
+
+export { signup, login, logout };
