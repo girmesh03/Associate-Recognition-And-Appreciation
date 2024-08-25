@@ -1,17 +1,26 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { CircularProgress, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../redux/features/auth/authActions";
 
 import FormTextField from "./FormTextField";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const loading = useSelector((state) => state.auth.loading);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       email: "",
@@ -19,8 +28,15 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      await dispatch(login(data)).unwrap();
+      toast.success("Login successful");
+      reset();
+      navigate("/recognitions");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -55,7 +71,7 @@ const LoginForm = () => {
         variant="contained"
         color="primary"
         fullWidth
-        // loading={true}
+        loading={loading}
         loadingIndicator={<CircularProgress size={24} />}
       >
         Login
