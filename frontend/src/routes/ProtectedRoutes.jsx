@@ -9,7 +9,7 @@ const ProtectedRoutes = ({ children }) => {
 
   if (isAuthenticated) {
     // Redirect non-admin users trying to access the admin route
-    if (currentUser.role !== "admin" && path === "admin") {
+    if (currentUser?.role !== "admin" && path === "admin") {
       return <Navigate to="/home" replace />;
     }
     return children;
