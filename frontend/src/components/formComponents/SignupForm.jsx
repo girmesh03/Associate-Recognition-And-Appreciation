@@ -1,20 +1,29 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
+import { useDispatch, useSelector } from "react-redux";
+import { signup } from "../../redux/features/auth/authActions";
+
 import FormTextField from "./FormTextField";
-import { departments, positions } from "../../utils/constants";
 import SelectAutocompleteField from "./SelectAutocompleteField";
+import { departments, positions } from "../../utils/constants";
 
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const loading = useSelector((state) => state.auth.loading);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
     getValues,
   } = useForm({
     defaultValues: {
@@ -28,8 +37,15 @@ const SignupForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      await dispatch(signup(data)).unwrap();
+      toast.success("Account created successfully, please login");
+      reset();
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -128,7 +144,7 @@ const SignupForm = () => {
           variant="contained"
           color="primary"
           fullWidth
-          // loading={true}
+          loading={loading}
           loadingIndicator={<CircularProgress size={24} />}
         >
           Login
