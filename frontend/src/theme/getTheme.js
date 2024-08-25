@@ -567,6 +567,9 @@ export const themeSettings = (mode) => {
       MuiTextField: {
         styleOverrides: {
           root: ({ theme }) => ({
+            "& label": {
+              backgroundColor: theme.palette.background.paper,
+            },
             "& label.Mui-focused": {
               color: theme.palette.text.primary,
               backgroundColor: theme.palette.background.paper,
