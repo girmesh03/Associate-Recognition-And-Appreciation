@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   AppBar,
   Badge,
+  Box,
   IconButton,
   Stack,
   Toolbar,
@@ -18,74 +19,85 @@ import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
 import SearchIcon from "@mui/icons-material/SearchOutlined";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 
+import { drawerWidth } from "../utils/constants";
+
 const Navbar = ({ isNoneMobile, handleDrawerToggle }) => {
   const mode = useSelector((state) => state.auth.mode);
   const dispatch = useDispatch();
 
   return (
     <AppBar
-      position="static"
+      position="fixed"
       sx={{
         boxShadow: 0,
         bgcolor: "transparent",
         backgroundImage: "none",
       }}
     >
-      <Toolbar
-        variant="regular"
+      <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          "& .MuiSvgIcon-root": {
-            color: "text.primary",
-            fontSize: "20px",
-          },
+          maxWidth: "xl",
+          width: "100%",
+          margin: "0 auto",
+          pl: { md: `${drawerWidth}px` },
         }}
       >
-        <Stack direction="row" alignItems="center" gap={1}>
-          <IconButton
-            onClick={handleDrawerToggle(true)}
-            variant="outlined"
-            size="small"
-            sx={{ display: isNoneMobile ? "none" : "" }}
-          >
-            <MenuRoundedIcon />
-          </IconButton>
-          <Typography
-            variant="h4"
-            component={Link}
-            to="/"
-            sx={{
-              fontWeight: 700,
-              letterSpacing: 3,
-              fontSize: "clamp(1.5rem, 1vw, 2rem)",
-              color: "primary.main",
-              textDecoration: "none",
-              display: { xs: "none", sm: "block" },
-            }}
-          >
-            Monthmaster
-          </Typography>
-        </Stack>
-        <Stack alignItems="center" direction="row">
-          <IconButton onClick={() => {}}>
-            <SearchIcon
+        <Toolbar
+          variant="regular"
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            "& .MuiSvgIcon-root": {
+              color: "text.primary",
+              fontSize: "20px",
+            },
+          }}
+        >
+          <Stack direction="row" alignItems="center" gap={1}>
+            <IconButton
+              onClick={handleDrawerToggle(true)}
+              variant="outlined"
+              size="small"
+              sx={{ display: isNoneMobile ? "none" : "" }}
+            >
+              <MenuRoundedIcon />
+            </IconButton>
+            <Typography
+              variant="h4"
+              component={Link}
+              to="/"
               sx={{
-                transform: "translateX(2px) translateY(1.5px)",
+                fontWeight: 700,
+                letterSpacing: 3,
+                fontSize: "clamp(1.5rem, 1vw, 2rem)",
+                color: mode === "light" ? "primary.main" : "text.primary",
+                textDecoration: "none",
+                display: { xs: "none", sm: "block" },
               }}
-            />
-          </IconButton>
-          <IconButton onClick={() => {}}>
-            <Badge>
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton onClick={() => dispatch(toggleMode())}>
-            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-          </IconButton>
-        </Stack>
-      </Toolbar>
+            >
+              Monthmaster
+            </Typography>
+          </Stack>
+          <Stack alignItems="center" direction="row">
+            <IconButton onClick={() => {}}>
+              <SearchIcon
+                sx={{
+                  transform: "translateX(2px) translateY(1.5px)",
+                }}
+              />
+            </IconButton>
+            <IconButton onClick={() => {}}>
+              <Badge>
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton onClick={() => dispatch(toggleMode())}>
+              {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
+          </Stack>
+        </Toolbar>
+      </Box>
     </AppBar>
   );
 };

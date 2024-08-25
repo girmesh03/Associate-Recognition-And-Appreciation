@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PURGE } from "redux-persist";
 import { toast } from "react-toastify";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Toolbar, useMediaQuery } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/features/auth/authActions";
@@ -35,23 +35,28 @@ const ProtectedLayout = ({ children }) => {
   };
 
   return (
-    <Box
-      width="100%"
-      height="100%"
-      sx={{ display: isNoneMobile ? "flex" : "block" }}
-    >
+    <Box sx={{ width: "100%", height: "100%", display: "flex" }}>
+      <Navbar
+        handleDrawerToggle={handleDrawerToggle}
+        isNoneMobile={isNoneMobile}
+      />
       <MuiDrawer
         open={openDrawer}
         handleDrawerToggle={handleDrawerToggle}
         isNoneMobile={isNoneMobile}
         handleLogout={handleLogout}
       />
-
-      <Box width="100%" height="100%" sx={{ flexGrow: 1 }}>
-        <Navbar
-          isNoneMobile={isNoneMobile}
-          handleDrawerToggle={handleDrawerToggle}
-        />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          width: "100%",
+          height: "100%",
+          maxWidth: "xl",
+          margin: "0 auto",
+        }}
+      >
+        <Toolbar />
         {children}
       </Box>
     </Box>

@@ -49,13 +49,13 @@ const ProtectedNavList = ({ handleDrawerToggle, handleLogout }) => {
         height: "100%",
         overflowY: "auto",
         flex: 1,
-        px: 1,
         "& .MuiListItemButton-root": {
           borderRadius: "8px",
           border: "1px solid",
           borderColor: "divider",
           py: 0.5,
           mb: 1,
+          mx: 1,
           flexGrow: 0,
           "&.Mui-selected, &.Mui-selected:hover": {
             bgcolor: (theme) => theme.palette.action.selected,
