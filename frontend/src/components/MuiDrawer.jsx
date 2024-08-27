@@ -33,7 +33,7 @@ const MuiDrawer = ({
         variant={isNoneMobile ? "permanent" : "temporary"}
         anchor="left"
         ModalProps={{
-          keepMounted: !isNoneMobile,
+          keepMounted: isNoneMobile ? true : false,
         }}
         sx={{
           display: { xs: "block", md: "block" },
