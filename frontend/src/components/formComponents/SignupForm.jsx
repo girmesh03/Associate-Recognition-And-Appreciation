@@ -40,9 +40,8 @@ const SignupForm = () => {
   const onSubmit = async (data) => {
     try {
       await dispatch(signup(data)).unwrap();
-      toast.success("Account created successfully, please login");
       reset();
-      navigate("/login");
+      navigate("/recognitions");
     } catch (error) {
       toast.error(error.message);
     }
