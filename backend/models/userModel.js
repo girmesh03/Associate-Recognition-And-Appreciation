@@ -5,37 +5,38 @@ const UserSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: true,
-      minLength: [2, "First name must be at least 2 characters long"],
-      maxLength: [15, "First name must be at most 15 characters long"],
+      required: [true, "First name field is required"],
+      minLength: [2, "Minimum 2 characters allowed"],
+      maxLength: [15, "Maximum 15 characters allowed"],
       trim: true,
     },
     lastName: {
       type: String,
-      required: true,
-      minLength: [2, "Last name must be at least 2 characters long"],
-      maxLength: [15, "Last name must be at most 15 characters long"],
+      required: [true, "Last name field is required"],
+      minLength: [2, "Minimum 2 characters allowed"],
+      maxLength: [15, "Maximum 15 characters allowed"],
       trim: true,
     },
     department: {
       type: String,
-      required: true,
+      required: [true, "Please select department"],
     },
     position: {
       type: String,
-      required: true,
+      required: [true, "Please select position"],
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Email field is required"],
       lowercase: true,
       unique: true,
-      maxLength: [50, "Email must be at most 50 characters long"],
+      maxLength: [50, "Maximum 50 characters allowed"],
     },
     password: {
       type: String,
-      required: true,
-      minLength: [5, "Password must be at least 8 characters long"],
+      required: [true, "Password field is required"],
+      minLength: [5, "Minimum password length is 5 characters"],
+      // maxLength: [20, "Maximum password length is 20 characters"],
       select: false,
     },
     role: {
@@ -59,9 +60,41 @@ const UserSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    availablePoints: {
-      type: Number,
-      default: 100,
+    points: {
+      sent: {
+        type: Number,
+        default: 0,
+      },
+      received: {
+        type: Number,
+        default: 0,
+      },
+    },
+    recognitions: {
+      sent: {
+        type: Number,
+        default: 0,
+      },
+      received: {
+        type: Number,
+        default: 0,
+      },
+    },
+    appreciations: {
+      sent: {
+        type: Number,
+        default: 0,
+      },
+      received: {
+        type: Number,
+        default: 0,
+      },
+    },
+    nominations: {
+      count: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   { timestamps: true }
