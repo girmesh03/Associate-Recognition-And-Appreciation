@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { attachmentSchema } from "./reusableSchemas.js";
 
 const appreciationSchema = new mongoose.Schema(
   {
@@ -16,23 +15,13 @@ const appreciationSchema = new mongoose.Schema(
     message: {
       type: String,
       required: true,
-      minlength: [5, "Message must be at least 5 characters long."],
-      maxlength: [500, "Message must be at most 500 characters long."],
+      minlength: [5, "At least 5 characters are required."],
+      maxlength: [500, "Maximum 500 characters allowed."],
       trim: true,
     },
-    visibility: {
-      type: String,
-      enum: ["public", "private"],
-      default: "public",
-    },
-    attachments: {
-      type: [attachmentSchema],
-      validate: {
-        validator: function (v) {
-          return v.length <= 5;
-        },
-        message: (props) => `You can upload a maximum of 5 files!`,
-      },
+    isAnonymous: {
+      type: Boolean,
+      default: false,
     },
     likes: [
       {
