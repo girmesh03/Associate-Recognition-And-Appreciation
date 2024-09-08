@@ -8,6 +8,8 @@ import app from "./app.js";
 import connectDB from "./config/db.js";
 import corsOptions from "./config/corsOptions.js";
 
+import { InsertManyUsers, InsertManyRecognitionData } from "./data/index.js";
+
 const PORT = process.env.PORT || 5000;
 
 // Create HTTP server
@@ -30,8 +32,22 @@ io.on("connection", (socket) => {
 // Connect to MongoDB
 connectDB();
 
+const ImportData = async () => {
+  await InsertManyUsers();
+  await InsertManyRecognitionData();
+};
+
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
+
+  // ImportData()
+  //   .then(() => {
+  //     process.env.IMPORT_DATA = false;
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
 
