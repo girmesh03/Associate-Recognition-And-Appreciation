@@ -15,13 +15,13 @@ const recognitionSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      required: true,
+      trim: true,
+      required: [true, "Category field is required."],
     },
     reason: {
       type: String,
-      required: true,
-      minlength: [5, "Reason must be at least 5 characters long."],
-      maxlength: [500, "Reason must be at most 500 characters long."],
+      required: [true, "Please add a reason."],
+      maxlength: [500, "Maximum 500 characters allowed."],
       trim: true,
     },
     date: {
@@ -30,20 +30,20 @@ const recognitionSchema = new mongoose.Schema(
     },
     pointsAwarded: {
       type: Number,
-      default: 0,
+      min: [1, "Minimum 1 point is required."],
+      max: [100, "Maximum 100 points allowed."],
     },
-    visibility: {
-      type: String,
-      enum: ["public", "private"],
-      default: "public",
+    isAnonymous: {
+      type: Boolean,
+      default: false,
     },
     attachments: {
       type: [attachmentSchema],
       validate: {
         validator: function (v) {
-          return v.length <= 5;
+          return v.length <= 2;
         },
-        message: (props) => `You can upload a maximum of 5 files!`,
+        message: () => "Maximum 2 files are allowed!",
       },
     },
     likes: [
