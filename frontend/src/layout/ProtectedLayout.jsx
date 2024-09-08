@@ -7,13 +7,11 @@ import { Box, Toolbar, useMediaQuery } from "@mui/material";
 
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/features/auth/authActions";
-import { useAxiosMakeRequest } from "../hooks/useAxiosMakeRequest";
 
 import Navbar from "../components/Navbar";
 import MuiDrawer from "../components/MuiDrawer";
 
 const ProtectedLayout = ({ children }) => {
-  useAxiosMakeRequest();
   const [openDrawer, setOpenDrawer] = useState(false);
   const isNoneMobile = useMediaQuery("(min-width: 900px)");
   const dispatch = useDispatch();
