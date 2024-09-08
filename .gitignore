@@ -5,6 +5,9 @@ frontend/dist
 frontend/dist-ssr
 *.local
 
+# public
+/backend/public
+
 # env
 .env
 
