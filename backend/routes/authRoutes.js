@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.route("/signup").post(signup);
 router.route("/login").post(login);
-router.route("/logout").post(logout);
-router.route("/refresh").post(refreshAccessToken);
+router.route("/logout").delete(logout);
+router.route("/refresh").get(refreshAccessToken);
 
 export default router;
