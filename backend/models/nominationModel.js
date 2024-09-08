@@ -21,34 +21,31 @@ const nominationSchema = new mongoose.Schema(
     justification: {
       type: String,
       required: true,
-      minlength: [5, "Justification must be at least 5 characters long."],
-      maxlength: [500, "Justification must be at most 500 characters long."],
+      minlength: [5, "At least 5 characters are required."],
+      maxlength: [500, "Maximum 500 characters allowed."],
       trim: true,
     },
-    visibility: {
-      type: String,
-      enum: ["public", "private"],
-      default: "public",
+    isAnonymous: {
+      type: Boolean,
+      default: false,
     },
     rating: {
       type: Number,
-      min: 0,
-      max: 100,
-      required: true,
+      min: [1, "Allowed minimum rating is 1."],
+      max: [100, "Allowed maximum rating is 100."],
+      required: [true, "Rating is required."],
     },
-    votes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    votes: {
+      type: Number,
+      default: 0,
+    },
     attachments: {
       type: [attachmentSchema],
       validate: {
         validator: function (v) {
-          return v.length <= 5;
+          return v.length <= 2;
         },
-        message: (props) => `You can upload a maximum of 5 files!`,
+        message: (props) => `You can upload a maximum of 2 files!`,
       },
     },
     comments: [

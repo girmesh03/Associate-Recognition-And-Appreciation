@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
+import filter from "redux-persist-transform-filter";
 import {
   persistStore,
   persistReducer,
@@ -14,9 +15,17 @@ import {
 import authReducer from "../features/auth/authSlice";
 
 const persistConfig = {
-  key: "auth",
+  key: "root",
   storage,
-  whitelist: ["auth"],
+  transforms: [
+    filter("auth", [
+      "currentUser",
+      "isAuthenticated",
+      "mode",
+      "error",
+      "loading",
+    ]),
+  ],
 };
 
 const rootReducer = combineReducers({

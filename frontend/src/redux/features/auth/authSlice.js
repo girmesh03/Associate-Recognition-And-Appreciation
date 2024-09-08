@@ -5,6 +5,7 @@ const initialState = {
   isAuthenticated: false,
   mode: localStorage.getItem("mode") || "light",
   currentUser: null,
+  accessToken: null,
   error: null,
   loading: false,
 };
@@ -15,6 +16,9 @@ const authSlice = createSlice({
   reducers: {
     toggleMode: (state) => {
       state.mode = state.mode === "light" ? "dark" : "light";
+    },
+    setAccessToken: (state, action) => {
+      state.accessToken = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -44,7 +48,6 @@ const authSlice = createSlice({
       })
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
-        state.isAuthenticated = false;
         state.error = action.payload;
       })
       .addCase(logout.pending, (state) => {
@@ -55,7 +58,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.currentUser = null;
-        state.error = null;
+        state.accessToken = null;
       })
       .addCase(logout.rejected, (state, action) => {
         state.loading = false;
@@ -64,5 +67,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { toggleMode } = authSlice.actions;
+export const { toggleMode, setAccessToken } = authSlice.actions;
 export default authSlice.reducer;

@@ -1,28 +1,33 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { makeRequest, setAuthToken } from "../../../api/apiRequest";
+import { publicRequest } from "../../../api/apiRequest";
+import { setAccessToken } from "./authSlice";
 
-export const login = createAsyncThunk(
-  "auth/login",
-  async (credentials, { rejectWithValue }) => {
+export const signup = createAsyncThunk(
+  "auth/signup",
+  async (credentials, { dispatch, rejectWithValue }) => {
     try {
-      const response = await makeRequest.post("/auth/login", credentials);
-      const { accessToken, ...userData } = response.data;
-      setAuthToken(accessToken);
-      return userData.user;
+      const response = await publicRequest.post("/auth/signup", credentials, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      dispatch(setAccessToken(response.data.accessToken));
+      return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const signup = createAsyncThunk(
-  "auth/signup",
-  async (credentials, { rejectWithValue }) => {
+export const login = createAsyncThunk(
+  "auth/login",
+  async (credentials, { dispatch, rejectWithValue }) => {
     try {
-      const response = await makeRequest.post("/auth/signup", credentials);
-      const { accessToken, ...userData } = response.data;
-      setAuthToken(accessToken);
-      return userData.user;
+      const response = await publicRequest.post("/auth/login", credentials, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      dispatch(setAccessToken(response.data.accessToken));
+      return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -33,23 +38,25 @@ export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await makeRequest.post("/auth/logout");
-      setAuthToken(null);
-      return response.data;
+      await publicRequest.delete("/auth/logout", {
+        withCredentials: true,
+      });
+      return;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const refreshToken = createAsyncThunk(
-  "auth/refreshToken",
-  async (_, { rejectWithValue }) => {
+export const refreshAccessToken = createAsyncThunk(
+  "auth/refresh",
+  async (_, { dispatch, rejectWithValue }) => {
     try {
-      const response = await makeRequest.post("/auth/refresh");
-      const { accessToken } = response.data;
-      setAuthToken(accessToken);
-      return accessToken;
+      const response = await publicRequest.get("/auth/refresh", {
+        withCredentials: true,
+      });
+      dispatch(setAccessToken(response.data.accessToken));
+      return response.data.accessToken;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }

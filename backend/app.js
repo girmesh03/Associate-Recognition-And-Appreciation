@@ -17,6 +17,7 @@ import userRoutes from "./routes/userRoutes.js";
 import recognitionRoutes from "./routes/recognitionRoutes.js";
 import nominationRoutes from "./routes/nominationRoutes.js";
 import appreciationRoutes from "./routes/appreciationRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,6 +36,7 @@ app.use("/api/users", protect, userRoutes);
 app.use("/api/recognitions", protect, recognitionRoutes);
 app.use("/api/nominations", protect, nominationRoutes);
 app.use("/api/appreciations", protect, appreciationRoutes);
+app.use("/api/comments", protect, commentRoutes);
 
 app.all("*", (req, res, next) => {
   next(new CustomError(`Can't find ${req.originalUrl} on this server!`, 404));
