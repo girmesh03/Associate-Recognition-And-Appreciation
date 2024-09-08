@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const refreshTokenSchema = mongoose.Schema({
+const RefreshTokenSchema = mongoose.Schema({
   token: {
     type: String,
     required: true,
@@ -11,13 +11,13 @@ const refreshTokenSchema = mongoose.Schema({
     ref: "User",
     required: true,
   },
-  createdAt: {
+  expireAt: {
     type: Date,
     default: Date.now,
     expires: "7d",
   },
 });
 
-const RefreshToken = mongoose.model("RefreshToken", refreshTokenSchema);
+const RefreshToken = mongoose.model("RefreshToken", RefreshTokenSchema);
 
 export default RefreshToken;
