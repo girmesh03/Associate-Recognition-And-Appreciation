@@ -1,26 +1,38 @@
 import jwt from "jsonwebtoken";
+import util from "util";
+import asyncHandler from "express-async-handler";
+import User from "../models/userModel.js";
 import CustomError from "../utils/CustomError.js";
 
-const protect = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+const protect = asyncHandler(async (req, res, next) => {
+  const authHeader = req.headers.authorization || req.headers.Authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(new CustomError("Authentication required.", 401));
+    // console.log("No access token provided");
+    return next(new CustomError("No access token provided", 401));
   }
 
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, decoded) => {
-    if (err) {
-      if (err.name === "TokenExpiredError") {
-        return next(new CustomError("TokenExpired", 403));
-      }
-      return next(new CustomError("Invalid access token.", 401));
+  try {
+    // console.log("Verifying token:", token);
+    const decoded = await util.promisify(jwt.verify)(
+      token,
+      process.env.JWT_ACCESS_SECRET
+    );
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      // console.log("User not found");
+      return next(new CustomError("User not found", 401));
     }
 
     req.user = decoded;
     next();
-  });
-};
+  } catch (error) {
+    // console.error("Token verification error:", error);
+    return next(new CustomError("Invalid access token", 401));
+  }
+});
 
 export default protect;
