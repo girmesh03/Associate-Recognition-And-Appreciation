@@ -8,7 +8,9 @@ import app from "./app.js";
 import connectDB from "./config/db.js";
 import corsOptions from "./config/corsOptions.js";
 
-import { InsertManyUsers, InsertManyRecognitionData } from "./data/index.js";
+// Import fake data
+import { ImportDataStatus } from "./models/reusableSchemas.js";
+import { ImportData } from "./data/fakeData.js";
 
 const PORT = process.env.PORT || 5000;
 
@@ -32,21 +34,17 @@ io.on("connection", (socket) => {
 // Connect to MongoDB
 connectDB();
 
-const ImportData = async () => {
-  await InsertManyUsers();
-  await InsertManyRecognitionData();
-};
-
-mongoose.connection.once("open", () => {
+mongoose.connection.once("open", async () => {
   console.log("Connected to MongoDB");
 
-  // ImportData()
-  //   .then(() => {
-  //     process.env.IMPORT_DATA = false;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
+  // Initialize import status if it doesn't exist
+  const existingStatus = await ImportDataStatus.findOne();
+  if (!existingStatus) {
+    await ImportDataStatus.create({ imported: false });
+  }
+
+  // Call import function
+  await ImportData();
 
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });

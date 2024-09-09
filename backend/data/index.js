@@ -165,16 +165,26 @@ const InsertManyUsers = async () => {
   try {
     await Users.deleteMany({});
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("12345", salt);
+    // Insert users without passwords
+    const insertedUsers = await Users.insertMany(usersData);
 
-    const users = usersData.map((user) => ({
-      ...user,
-      password: hashedPassword,
-    }));
+    // Hash and update passwords for each user
+    await Promise.all(
+      insertedUsers.map(async (user) => {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash("12345", salt);
 
-    await Users.insertMany(users);
-    console.log("InsertManyUsers: Data imported successfully");
+        return Users.findByIdAndUpdate(
+          user._id,
+          { $set: { password: hashedPassword } },
+          { new: true }
+        );
+      })
+    );
+
+    console.log(
+      "InsertManyUsers: Data imported and passwords hashed successfully"
+    );
   } catch (error) {
     console.error("InsertManyUsers: Error importing data", error);
   }
