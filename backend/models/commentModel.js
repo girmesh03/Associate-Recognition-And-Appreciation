@@ -9,7 +9,7 @@ const commentSchema = new mongoose.Schema({
   comment: {
     type: String,
     required: [true, "Comment is required"],
-    maxlength: [200, "Maximum 200 characters allowed"],
+    maxlength: [500, "Maximum 500 characters allowed"],
     trim: true,
   },
   postType: {

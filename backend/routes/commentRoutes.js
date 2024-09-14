@@ -1,7 +1,7 @@
 import express from "express";
 import {
   addComment,
-  getAllComments,
+  getPostComments,
   deleteComment,
 } from "../controllers/commentController.js";
 
@@ -11,7 +11,7 @@ const router = express.Router();
 router.route("/").post(addComment);
 
 // Route to get all comments for an entity
-router.route("/").get(getAllComments);
+router.route("/").get(getPostComments);
 
 // Route to delete a comment
 router.route("/:commentId").delete(deleteComment);

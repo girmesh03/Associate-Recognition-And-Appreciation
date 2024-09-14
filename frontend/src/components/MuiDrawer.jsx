@@ -1,13 +1,6 @@
 import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
-import {
-  Avatar,
-  Box,
-  Drawer,
-  Skeleton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 
 import { useSelector } from "react-redux";
 
@@ -69,14 +62,7 @@ const MuiDrawer = ({
             spacing={1}
             sx={{ py: 1, borderBottom: 1, borderColor: "divider" }}
           >
-            {open || isNoneMobile ? (
-              <Avatar
-                src={currentUser?.profilePicture}
-                sx={{ width: 50, height: 50 }}
-              />
-            ) : (
-              <Skeleton variant="circular" width={50} height={50} />
-            )}
+            <Avatar src={currentUser?.profilePicture} alt="user profile" />
             <Typography variant="body2" sx={{ color: "text.primary" }}>
               {`${currentUser?.firstName} ${currentUser?.lastName}`}
             </Typography>

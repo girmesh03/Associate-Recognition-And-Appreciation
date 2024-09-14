@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password field is required"],
       minLength: [5, "Minimum password length is 5 characters"],
-      // maxLength: [20, "Maximum password length is 20 characters"],
+      maxLength: [20, "Maximum password length is 20 characters"],
       select: false,
     },
     role: {
@@ -46,11 +46,13 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "http://localhost:4000/uploads/default/noAvatar.jpg",
+      default: "",
+      // default: "http://localhost:4000/uploads/default/noAvatar.webp",
     },
     coverPicture: {
       type: String,
-      default: "http://localhost:4000/uploads/default/noCover.jpg",
+      default: "",
+      // default: "http://localhost:4000/uploads/default/noCover.webp",
     },
     followers: {
       type: Array,

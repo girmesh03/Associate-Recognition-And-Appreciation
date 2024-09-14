@@ -9,4 +9,14 @@ const attachmentSchema = new mongoose.Schema({
   fileType: { type: String, enum: ["image", "video"], required: true },
 });
 
-export { attachmentSchema };
+// Reusable Import Status Schema
+const importStatusSchema = new mongoose.Schema({
+  imported: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const ImportDataStatus = mongoose.model("ImportDataStatus", importStatusSchema);
+
+export { attachmentSchema, ImportDataStatus };

@@ -184,14 +184,37 @@ const deleteRecognition = asyncHandler(async (req, res, next) => {
       return next(new CustomError("Sender or receiver not found", 404));
     }
 
-    // Deduct points and update recognition counts for both sender and receiver
+    // Fetch current points and recognition counts for both sender and receiver
+    const senderPoints = sender.points.sent;
+    const senderRecognitionsSent = sender.recognitions.sent;
+
+    const receiverPoints = receiver.points.received;
+    const receiverRecognitionsReceived = receiver.recognitions.received;
+
+    // Calculate new points and recognitions ensuring they don't go below zero
+    const newSenderPoints = Math.max(
+      senderPoints - recognition.pointsAwarded,
+      0
+    );
+    const newSenderRecognitionsSent = Math.max(senderRecognitionsSent - 1, 0);
+
+    const newReceiverPoints = Math.max(
+      receiverPoints - recognition.pointsAwarded,
+      0
+    );
+    const newReceiverRecognitionsReceived = Math.max(
+      receiverRecognitionsReceived - 1,
+      0
+    );
+
+    // Update users' points and recognition counts
     await Promise.all([
       User.findByIdAndUpdate(
         sender._id,
         {
-          $inc: {
-            "points.sent": -recognition.pointsAwarded,
-            "recognitions.sent": -1,
+          $set: {
+            "points.sent": newSenderPoints,
+            "recognitions.sent": newSenderRecognitionsSent,
           },
         },
         { new: true }
@@ -199,9 +222,9 @@ const deleteRecognition = asyncHandler(async (req, res, next) => {
       User.findByIdAndUpdate(
         receiver._id,
         {
-          $inc: {
-            "points.received": -recognition.pointsAwarded,
-            "recognitions.received": -1,
+          $set: {
+            "points.received": newReceiverPoints,
+            "recognitions.received": newReceiverRecognitionsReceived,
           },
         },
         { new: true }

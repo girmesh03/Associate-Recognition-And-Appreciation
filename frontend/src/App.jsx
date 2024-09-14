@@ -18,7 +18,19 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <PageRouter />
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={mode === "dark" ? "dark" : "light"}
+        limit={3}
+      />
     </ThemeProvider>
   );
 };

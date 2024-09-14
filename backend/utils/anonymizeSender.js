@@ -24,7 +24,7 @@ const anonymizeSender = (post, userId, userRole) => {
       firstName: "Anonymous",
       lastName: "",
       email: "",
-      profilePicture: null,
+      profilePicture: "",
     };
   }
 

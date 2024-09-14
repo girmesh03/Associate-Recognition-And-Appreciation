@@ -603,6 +603,9 @@ export const themeSettings = (mode) => {
                 outline: "4px solid",
                 outlineColor: brand[200],
               },
+              [theme.breakpoints.down(375)]: {
+                minWidth: "auto",
+              },
             },
             ...(theme.palette.mode === "dark" && {
               "& .MuiOutlinedInput-root": {
@@ -626,6 +629,9 @@ export const themeSettings = (mode) => {
                   borderColor: brand[400],
                   outline: "4px solid",
                   outlineColor: alpha(brand[500], 0.5),
+                },
+                [theme.breakpoints.down(375)]: {
+                  minWidth: "auto",
                 },
               },
             }),

@@ -30,6 +30,8 @@ const signup = asyncHandler(async (req, res, next) => {
     email,
     password,
     role,
+    profilePicture: `${process.env.BASE_URL}/uploads/default/noAvatar.webp`,
+    coverPicture: `${process.env.BASE_URL}/uploads/default/noCover.webp`,
   });
 
   // Generate JWT
@@ -47,19 +49,26 @@ const signup = asyncHandler(async (req, res, next) => {
     return next(new CustomError("Something went wrong", 500));
   }
 
-  // Send refresh token to client, via a cookie
+  // Send access and refresh token to client, via a cookie
+  res.cookie("access_token", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   // Prepare response
   const { password: pwd, __v, ...others } = user._doc;
 
   // Send response
-  res.status(201).json({ accessToken, user: others });
+  res.status(201).json(others);
 });
 
 //@desc     Login user
@@ -100,7 +109,14 @@ const login = asyncHandler(async (req, res, next) => {
     return next(new CustomError("Error updating refresh token.", 500));
   }
 
-  // Send refresh token to client, via a cookie
+  // Send access and refresh token to client, via a cookie
+  res.cookie("access_token", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -112,7 +128,7 @@ const login = asyncHandler(async (req, res, next) => {
   const { password: pwd, __v, ...others } = user._doc;
 
   // Send response
-  res.status(200).json({ accessToken, user: others });
+  res.status(200).json(others);
 });
 
 //@desc     Logout user
@@ -126,7 +142,8 @@ const logout = asyncHandler(async (req, res, next) => {
     await RefreshToken.findOneAndDelete({ token: refreshToken });
   }
 
-  // Clear the refresh token cookie, return an empty response
+  // Clear the access and refresh token cookie, return an empty response
+  res.clearCookie("access_token");
   res.clearCookie("refresh_token");
   res.sendStatus(204);
 });
@@ -162,7 +179,15 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
     }
 
     const accessToken = generateAccessToken(decoded.id, decoded.role);
-    res.status(200).json({ accessToken });
+    // Send access and refresh token to client, via a cookie
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: "Access token refreshed successfully" });
   });
 });
 

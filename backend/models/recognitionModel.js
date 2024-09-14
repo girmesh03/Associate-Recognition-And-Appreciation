@@ -41,9 +41,9 @@ const recognitionSchema = new mongoose.Schema(
       type: [attachmentSchema],
       validate: {
         validator: function (v) {
-          return v.length <= 2;
+          return v.length <= 5;
         },
-        message: () => "Maximum 2 files are allowed!",
+        message: () => "Maximum 5 files are allowed!",
       },
     },
     likes: [

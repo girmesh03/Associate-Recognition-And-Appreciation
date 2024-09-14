@@ -17,15 +17,7 @@ import authReducer from "../features/auth/authSlice";
 const persistConfig = {
   key: "root",
   storage,
-  transforms: [
-    filter("auth", [
-      "currentUser",
-      "isAuthenticated",
-      "mode",
-      "error",
-      "loading",
-    ]),
-  ],
+  transforms: [filter("auth", ["currentUser", "isAuthenticated", "mode"])],
 };
 
 const rootReducer = combineReducers({
