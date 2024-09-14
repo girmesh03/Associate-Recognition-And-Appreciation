@@ -5,19 +5,17 @@ import User from "../models/userModel.js";
 import CustomError from "../utils/CustomError.js";
 
 const protect = asyncHandler(async (req, res, next) => {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
+  const accessToken = req.cookies?.access_token;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!accessToken) {
     // console.log("No access token provided");
     return next(new CustomError("No access token provided", 401));
   }
 
-  const token = authHeader.split(" ")[1];
-
   try {
     // console.log("Verifying token:", token);
     const decoded = await util.promisify(jwt.verify)(
-      token,
+      accessToken,
       process.env.JWT_ACCESS_SECRET
     );
 
