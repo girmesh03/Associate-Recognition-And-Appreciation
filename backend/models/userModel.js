@@ -46,11 +46,13 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "http://localhost:4000/uploads/default/noAvatar.jpg",
+      default: "",
+      // default: "http://localhost:4000/uploads/default/noAvatar.webp",
     },
     coverPicture: {
       type: String,
-      default: "http://localhost:4000/uploads/default/noCover.jpg",
+      default: "",
+      // default: "http://localhost:4000/uploads/default/noCover.webp",
     },
     followers: {
       type: Array,
