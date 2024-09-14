@@ -58,10 +58,10 @@ const addComment = asyncHandler(async (req, res, next) => {
   res.status(200).json(response);
 });
 
-//@desc     Get all comments for an entity
-//@route    GET /api/comments
+//@desc     Get a post's comments, post: recognition, nomination, appreciation
+//@route    GET /api/comments?postId=:postId&postType=recognition
 //@access   Private
-const getAllComments = asyncHandler(async (req, res, next) => {
+const getPostComments = asyncHandler(async (req, res, next) => {
   const { postId, postType } = req.query;
 
   // Validate postType
@@ -137,4 +137,4 @@ const deleteComment = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Comment deleted successfully" });
 });
 
-export { addComment, getAllComments, deleteComment };
+export { addComment, getPostComments, deleteComment };
