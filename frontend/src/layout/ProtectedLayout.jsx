@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PURGE } from "redux-persist";
 import { toast } from "react-toastify";
 import { Box, Toolbar, useMediaQuery } from "@mui/material";
 
@@ -24,7 +23,6 @@ const ProtectedLayout = ({ children }) => {
   const handleLogout = async () => {
     try {
       await dispatch(logout()).unwrap();
-      dispatch({ type: PURGE, result: () => null });
       navigate("/", { replace: true });
       if (!isNoneMobile && openDrawer) {
         setOpenDrawer(false);
