@@ -176,7 +176,15 @@ const InsertManyUsers = async () => {
 
         return Users.findByIdAndUpdate(
           user._id,
-          { $set: { password: hashedPassword } },
+          {
+            $set: {
+              password: hashedPassword,
+              profilePicture:
+                "http://localhost:4000/uploads/default/noAvatar.webp",
+              coverPicturePicture:
+                "http://localhost:4000/uploads/default/noCover.webp",
+            },
+          },
           { new: true }
         );
       })
