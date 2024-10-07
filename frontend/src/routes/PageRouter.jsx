@@ -4,18 +4,16 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
-  Outlet,
 } from "react-router-dom";
 
 //  Imports for components and utilities
 import LoadingFallback from "../components/loadingSkeletons/LoadingFallback";
 import RootErrorBoundary from "../layout/RootErrorBoundary";
 import ProtectedRoutes from "./ProtectedRoutes";
+import PublicRoutes from "./PublicRoutes";
 
 // Imports for layouts
 const RootLayout = lazy(() => import("../layout/RootLayout"));
-const PublicLayout = lazy(() => import("../layout/PublicLayout"));
-import ProtectedLayout from "../layout/ProtectedLayout";
 
 // Imports for pages (lazy-loaded), public
 const HomePage = lazy(() => import("../pages/HomePage"));
@@ -26,8 +24,8 @@ const SignupPage = lazy(() => import("../pages/SignupPage"));
 const RecognitionPage = lazy(() =>
   import("../pages/Recognition/RecognitionPage")
 );
-const RecognitionEdit = lazy(() =>
-  import("../pages/Recognition/RecognitionEdit")
+const RecognitionCreateEdit = lazy(() =>
+  import("../pages/Recognition/RecognitionCreateEdit")
 );
 const NominationPage = lazy(() => import("../pages/NominationPage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
@@ -37,6 +35,7 @@ const AdminPage = lazy(() => import("../pages/AdminPage"));
 // Imports for routes and loaders
 import { RecognitionLoader } from "../pages/Recognition/RecognitionLoader";
 import RecognitionError from "../pages/Recognition/RecognitionError";
+import { RecognitionCreateEditLoader } from "../pages/Recognition/RecognitionCreateEdit";
 
 const PageRouter = memo(() => {
   const router = createBrowserRouter(
@@ -51,38 +50,14 @@ const PageRouter = memo(() => {
         errorElement={<RootErrorBoundary />}
       >
         {/* Public Routes */}
-        <Route
-          element={
-            <Suspense fallback={<LoadingFallback />}>
-              <PublicLayout />
-            </Suspense>
-          }
-        >
+        <Route element={<PublicRoutes />}>
           <Route index element={<HomePage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
         </Route>
 
         {/* Protected Routes */}
-        <Route
-          element={
-            <ProtectedRoutes>
-              <ProtectedLayout>
-                <Suspense
-                  fallback={
-                    <LoadingFallback
-                      height="80%"
-                      width="100%"
-                      sx={{ transform: { md: "translateX(-80px)" } }}
-                    />
-                  }
-                >
-                  <Outlet />
-                </Suspense>
-              </ProtectedLayout>
-            </ProtectedRoutes>
-          }
-        >
+        <Route element={<ProtectedRoutes />}>
           <Route
             path="recognitions"
             element={<RecognitionPage />}
@@ -90,8 +65,14 @@ const PageRouter = memo(() => {
             errorElement={<RecognitionError />}
           />
           <Route
+            path="recognitions/create"
+            element={<RecognitionCreateEdit mode="create" />}
+            loader={RecognitionCreateEditLoader}
+          />
+          <Route
             path="recognitions/:recognitionId/edit"
-            element={<RecognitionEdit />}
+            element={<RecognitionCreateEdit mode="edit" />}
+            loader={RecognitionCreateEditLoader}
           />
 
           <Route path="nominations" element={<NominationPage />} />
