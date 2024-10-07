@@ -1,6 +1,7 @@
 import express from "express";
 import checkOwnershipOrAdmin from "../middlewares/ownershipOrAdmin.js";
-import upload from "../middlewares/multerMiddleware.js";
+import { upload, processFiles } from "../middlewares/multerMiddleware.js";
+
 import {
   getAllRecognitions,
   getRecognition,
@@ -18,7 +19,11 @@ const router = express.Router();
 router
   .route("/")
   .get(getAllRecognitions)
-  .post(upload.fields([{ name: "attachments" }]), createRecognition);
+  .post(
+    upload.fields([{ name: "attachments" }]),
+    processFiles,
+    createRecognition
+  );
 
 // Route to handle a single recognition (get, update, delete)
 router
@@ -27,6 +32,7 @@ router
   .put(
     checkOwnershipOrAdmin("Recognition", "recognitionId"),
     upload.fields([{ name: "attachments" }]),
+    processFiles,
     updateRecognition
   )
   .delete(
