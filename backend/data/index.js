@@ -56,7 +56,7 @@ const RecognitionData = [
     receiver: "",
     reason: "Exceptional collaboration efforts in achieving team goals.",
     pointsAwarded: 5,
-    category: "collaboration",
+    category: "Top Performer",
     isAnonymous: false,
     attachments: [],
   },
@@ -65,26 +65,9 @@ const RecognitionData = [
     receiver: "",
     reason: "Outstanding leadership demonstrated during a challenging project.",
     pointsAwarded: 12,
-    category: "leadership",
+    category: "Team Player",
     isAnonymous: false,
-    attachments: [
-      {
-        filename: "attachments-1725818719023.jpg",
-        path: "http://localhost:4000/uploads/images/attachments-1725818719023.jpg",
-        mimetype: "image/jpeg",
-        size: 3041282,
-        fileType: "image",
-        _id: "66dde75f41c0b66b3eb0543d",
-      },
-      {
-        filename: "attachments-1725818719097.jpg",
-        path: "http://localhost:4000/uploads/images/attachments-1725818719097.jpg",
-        mimetype: "image/jpeg",
-        size: 5983946,
-        fileType: "image",
-        _id: "66dde75f41c0b66b3eb0543e",
-      },
-    ],
+    attachments: [],
   },
   {
     sender: "",
@@ -92,26 +75,9 @@ const RecognitionData = [
     reason:
       "Remarkable problem-solving skills displayed in resolving critical issues.",
     pointsAwarded: 10,
-    category: "problemsolving",
+    category: "Customer Champion",
     isAnonymous: true,
-    attachments: [
-      {
-        filename: "attachments-1725818411183.mp4",
-        path: "http://localhost:4000/uploads/videos/attachments-1725818411183.mp4",
-        mimetype: "video/mp4",
-        size: 23544017,
-        fileType: "video",
-        _id: "66dde62b60869663c036d8b1",
-      },
-      {
-        filename: "attachments-1725818411704.mp4",
-        path: "http://localhost:4000/uploads/videos/attachments-1725818411704.mp4",
-        mimetype: "video/mp4",
-        size: 9691729,
-        fileType: "video",
-        _id: "66dde62b60869663c036d8b2",
-      },
-    ],
+    attachments: [],
   },
   {
     sender: "",
@@ -119,45 +85,19 @@ const RecognitionData = [
     reason:
       "Consistent dedication to achieving project milestones ahead of schedule.",
     pointsAwarded: 75,
-    category: "dedication",
+    category: "Rising Star",
     isAnonymous: true,
-    attachments: [
-      {
-        filename: "attachments-1725818380309.mp4",
-        path: "http://localhost:4000/uploads/videos/attachments-1725818380309.mp4",
-        mimetype: "video/mp4",
-        size: 23544017,
-        fileType: "video",
-        _id: "66dde60c60869663c036d8a3",
-      },
-      {
-        filename: "attachments-1725818380769.jpg",
-        path: "http://localhost:4000/uploads/images/attachments-1725818380769.jpg",
-        mimetype: "image/jpeg",
-        size: 3041282,
-        fileType: "image",
-        _id: "66dde60c60869663c036d8a4",
-      },
-    ],
+    attachments: [],
   },
   {
     sender: "",
     receiver: "",
-    category: "innovation",
+    category: "Leadership Excellence",
     reason:
       "Innovative approach to problem-solving leading to significant cost savings.",
     pointsAwarded: 100,
     isAnonymous: false,
-    attachments: [
-      {
-        filename: "attachments-1725816283797.mp4",
-        path: "http://localhost:4000/uploads/videos/attachments-1725816283797.mp4",
-        mimetype: "video/mp4",
-        size: 23544017,
-        fileType: "video",
-        _id: "66dddddc5d6b929a96a5785d",
-      },
-    ],
+    attachments: [],
   },
 ];
 
