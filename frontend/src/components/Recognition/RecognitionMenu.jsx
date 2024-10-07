@@ -1,7 +1,9 @@
+// react imports
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
+// mui imports
 import {
   Menu,
   MenuItem,
@@ -10,12 +12,12 @@ import {
   Typography,
   Tooltip,
 } from "@mui/material";
-
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+// redux imports
 import { useSelector } from "react-redux";
 
 const RecognitionMenu = ({
@@ -36,10 +38,12 @@ const RecognitionMenu = ({
   return (
     <Menu
       id="recognition-menu"
-      aria-labelledby="recognition-more"
       open={open}
       anchorEl={anchorEl}
       onClose={handleClose}
+      MenuListProps={{
+        "aria-labelledby": "recognition-more",
+      }}
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "right",
@@ -61,6 +65,7 @@ const RecognitionMenu = ({
             borderRadius: 0,
           },
           "& .MuiListItemIcon-root": {
+            alignSelf: "flex-start",
             minWidth: 32,
             padding: 0.75,
             marginRight: 1,
@@ -175,7 +180,6 @@ RecognitionMenu.propTypes = {
   open: PropTypes.bool,
   handleClose: PropTypes.func,
   recognition: PropTypes.object,
-  currentUser: PropTypes.object,
   BookmarkToggle: PropTypes.func,
   DeleteRecognition: PropTypes.func,
 };
