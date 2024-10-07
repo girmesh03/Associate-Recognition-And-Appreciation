@@ -4,7 +4,7 @@ import Appreciation from "../models/appreciationModel.js";
 import CustomError from "../utils/CustomError.js";
 
 const checkOwnershipOrAdmin =
-  (ModelName, idParamName = "id") =>
+  (ModelName, idParamName = "id", postSender = "sender", postReceiver = "receiver") =>
   async (req, res, next) => {
     try {
       const { user } = req;
@@ -31,8 +31,8 @@ const checkOwnershipOrAdmin =
 
       if (
         user.role === "admin" ||
-        user.id === document.sender._id.toString() ||
-        user.id === document.receiver._id.toString()
+        user.id === document[postSender]?._id?.toString() ||
+        user.id === document[postReceiver]?._id?.toString()
       ) {
         next(); // User is authorized, proceed to the next handler
       } else {
