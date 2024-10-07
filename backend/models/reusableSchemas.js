@@ -7,6 +7,9 @@ const attachmentSchema = new mongoose.Schema({
   mimetype: { type: String, required: true },
   size: { type: Number, required: true },
   fileType: { type: String, enum: ["image", "video"], required: true },
+  width: { type: Number, required: true },
+  height: { type: Number, required: true },
+  thumbnail: { type: String, required: false },
 });
 
 // Reusable Import Status Schema
