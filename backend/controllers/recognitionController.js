@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Recognition from "../models/recognitionModel.js";
 import User from "../models/userModel.js";
+import Comment from "../models/commentModel.js";
 import CustomError from "../utils/CustomError.js";
 import { deleteAttachments } from "../utils/fileUtils.js";
 import anonymizeSender from "../utils/anonymizeSender.js";
@@ -13,20 +14,10 @@ const createRecognition = asyncHandler(async (req, res, next) => {
   const { sender, receiver, category, reason, pointsAwarded, isAnonymous } =
     req.body;
 
-  // Initialize an array for file uploads and
-  let fileUploads = [];
-
-  // Map over the uploaded files
+  // Initialize an array for file uploads
+  let uploadedFiles = [];
   if (req.files && req.files.attachments) {
-    fileUploads = req.files.attachments.map((file) => ({
-      filename: file.filename,
-      path: `${process.env.BASE_URL}/uploads/${
-        file.mimetype.startsWith("image/") ? "images" : "videos"
-      }/${file.filename}`,
-      mimetype: file.mimetype,
-      size: file.size,
-      fileType: file.mimetype.startsWith("image/") ? "image" : "video",
-    }));
+    uploadedFiles = req.files.attachments;
   }
 
   try {
@@ -43,19 +34,19 @@ const createRecognition = asyncHandler(async (req, res, next) => {
         : receiverUser
         ? "Sender is"
         : "Sender and receiver are";
-      deleteAttachments(fileUploads);
+      await deleteAttachments(uploadedFiles);
       return next(new CustomError(`${whichOne} not found`, 404));
     }
 
     // Ensure the sender and receiver are not the same
     if (senderUser._id.equals(receiverUser._id)) {
-      deleteAttachments(fileUploads);
+      await deleteAttachments(uploadedFiles);
       return next(new CustomError("Cannot recognize yourself", 400));
     }
 
     // Validate pointsAwarded
     if (isNaN(pointsAwarded)) {
-      deleteAttachments(fileUploads);
+      await deleteAttachments(uploadedFiles);
       return next(new CustomError("Points awarded must be a number", 400));
     }
 
@@ -76,7 +67,7 @@ const createRecognition = asyncHandler(async (req, res, next) => {
     ]);
 
     if (!updatedSender || !updatedReceiver) {
-      deleteAttachments(fileUploads);
+      await deleteAttachments(uploadedFiles);
       return next(new CustomError("Unable to deduct user points", 404));
     }
 
@@ -88,7 +79,7 @@ const createRecognition = asyncHandler(async (req, res, next) => {
       reason,
       pointsAwarded,
       isAnonymous,
-      attachments: fileUploads,
+      attachments: uploadedFiles,
     });
 
     // Retrieve the newly created recognition with populated sender and receiver data
@@ -100,7 +91,7 @@ const createRecognition = asyncHandler(async (req, res, next) => {
     res.status(201).json(response);
   } catch (error) {
     // Handle errors and delete any uploaded attachments if an error occurs
-    deleteAttachments(fileUploads);
+    await deleteAttachments(uploadedFiles);
     next(error);
   }
 });
@@ -168,7 +159,6 @@ const deleteRecognition = asyncHandler(async (req, res, next) => {
     const recognition = await Recognition.findById(recognitionId);
 
     // Check if the recognition exists
-    // TODO: This checked by ownershipOrAdmin middleware, needs improvement
     if (!recognition) {
       return next(new CustomError("Recognition not found", 404));
     }
@@ -231,24 +221,22 @@ const deleteRecognition = asyncHandler(async (req, res, next) => {
       ),
     ]);
 
-    // Delete the recognition
-    const deletedRecognition = await Recognition.findByIdAndDelete(
-      recognitionId
-    );
+    // Delete associated attachments
+    if (recognition.attachments && recognition.attachments.length > 0) {
+      // console.log("Deleting attachments:", recognition.attachments);
+      await deleteAttachments(recognition.attachments);
+    }
 
     // Delete associated comments
-    if (deletedRecognition.comments.length > 0) {
-      await Comment.deleteMany({ postId: deletedRecognition._id });
-    }
+    await Comment.deleteMany({ postId: recognition._id });
 
-    // Delete associated attachments
-    if (deletedRecognition) {
-      deleteAttachments(deletedRecognition.attachments);
-    }
+    // Delete the recognition
+    await Recognition.findByIdAndDelete(recognition._id);
 
     // Send a successful response, with no content
     res.sendStatus(204);
   } catch (error) {
+    console.error("Error deleting recognition:", error);
     next(error);
   }
 });
@@ -261,30 +249,23 @@ const updateRecognition = asyncHandler(async (req, res, next) => {
   const { sender, receiver, category, reason, pointsAwarded, isAnonymous } =
     req.body;
 
-  // Validate pointsAwarded
-  if (isNaN(pointsAwarded)) {
-    return next(new CustomError("Points awarded must be a number", 400));
-  }
-
   let newAttachments = [];
   if (req.files && req.files.attachments) {
-    newAttachments = req.files.attachments.map((file) => ({
-      filename: file.filename,
-      path: `${process.env.BASE_URL}/uploads/${
-        file.mimetype.startsWith("image/") ? "images" : "videos"
-      }/${file.filename}`,
-      mimetype: file.mimetype,
-      size: file.size,
-      fileType: file.mimetype.startsWith("image/") ? "image" : "video",
-    }));
+    newAttachments = req.files.attachments;
   }
 
   try {
     // Find the recognition
     const recognition = await Recognition.findById(recognitionId);
     if (!recognition) {
-      deleteAttachments(newAttachments);
+      await deleteAttachments(newAttachments);
       return next(new CustomError("Recognition not found", 404));
+    }
+
+    // Validate pointsAwarded
+    if (isNaN(pointsAwarded)) {
+      await deleteAttachments(newAttachments);
+      return next(new CustomError("Points awarded must be a number", 400));
     }
 
     // Find the sender and receiver
@@ -299,14 +280,8 @@ const updateRecognition = asyncHandler(async (req, res, next) => {
         : receiverUser
         ? "Sender is"
         : "Sender and receiver are";
-      deleteAttachments(newAttachments);
+      await deleteAttachments(newAttachments);
       return next(new CustomError(`${whichOne} not found`, 404));
-    }
-
-    // Check if the sender and receiver are the same
-    if (senderUser._id.equals(receiverUser._id)) {
-      deleteAttachments(newAttachments);
-      return next(new CustomError("Cannot recognize yourself", 400));
     }
 
     // Update points if they've changed
@@ -336,8 +311,12 @@ const updateRecognition = asyncHandler(async (req, res, next) => {
       ]);
     }
 
-    // Update recognition document
+    // Remove old attachments if new attachments are added
     const oldAttachments = recognition.attachments;
+    if (newAttachments.length != oldAttachments.length) {
+      await deleteAttachments(oldAttachments);
+    }
+
     const updatedRecognition = await Recognition.findByIdAndUpdate(
       recognitionId,
       {
@@ -348,21 +327,18 @@ const updateRecognition = asyncHandler(async (req, res, next) => {
         pointsAwarded,
         isAnonymous,
         attachments:
-          newAttachments.length > 0 ? newAttachments : oldAttachments,
+          newAttachments.length != oldAttachments.length
+            ? newAttachments
+            : oldAttachments,
       },
       { new: true }
     );
-
-    // Remove old attachments if new attachments are added
-    if (updateRecognition && newAttachments.length > 0) {
-      deleteAttachments(oldAttachments);
-    }
 
     // Send the updated recognition
     res.status(200).json(updatedRecognition);
   } catch (error) {
     // Handle errors
-    deleteAttachments(newAttachments);
+    await deleteAttachments(newAttachments);
     next(error);
   }
 });

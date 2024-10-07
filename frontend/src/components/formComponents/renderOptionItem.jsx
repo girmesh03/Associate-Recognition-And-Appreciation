@@ -1,39 +1,38 @@
+// react imports
 import { createElement } from "react";
+
+// mui imports
 import {
   Avatar,
   ListItem,
   ListItemAvatar,
-  ListItemButton,
   ListItemIcon,
   ListItemText,
-  Skeleton,
 } from "@mui/material";
 
 const renderOptionItem = (name) => (props, option) => {
   switch (name) {
     case "position":
     case "department":
+    case "category":
       return (
-        <ListItem {...props} key={option.id}>
+        <ListItem {...props} key={option._id} disablePadding>
           <ListItemIcon>{createElement(option.icon)}</ListItemIcon>
-          <ListItemText primary={option.value} />
+          <ListItemText primary={option.label} />
         </ListItem>
       );
     case "receiver":
+    case "users":
       return (
-        <ListItemButton {...props} key={option._id}>
+        <ListItem {...props} key={option._id} disablePadding>
           <ListItemAvatar>
-            {option?.profilePicture ? (
-              <Avatar src={option.profilePicture} alt="" />
-            ) : (
-              <Skeleton variant="circular" width={40} height={40} />
-            )}
+            <Avatar src={option.profilePicture} alt={option.firstName} />
           </ListItemAvatar>
           <ListItemText
             primary={`${option.firstName} ${option.lastName}`}
             secondary={option.position}
           />
-        </ListItemButton>
+        </ListItem>
       );
     default:
       return null;

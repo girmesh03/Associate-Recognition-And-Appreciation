@@ -1,4 +1,6 @@
+// mui imports
 import {
+  Box,
   Card,
   CardActions,
   CardContent,
@@ -57,11 +59,21 @@ const RecognitionSkeleton = () => {
   );
 
   return (
-    <>
+    <Box
+      sx={{
+        maxWidth: 700,
+        margin: "0 auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        px: { xs: 0.5, sm: 2 },
+        py: 2,
+      }}
+    >
       {Array.from(Array(POST_COUNTER).keys()).map((idx) => (
         <MuiSkeleton key={idx} />
       ))}
-    </>
+    </Box>
   );
 };
 

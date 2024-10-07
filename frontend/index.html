@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,9 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Material Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
 
     <title>Month Master</title>
+
+    <style>
+      em-emoji-picker {
+        width: min-content;
+        position: absolute;
+        right: 20px;
+        z-index: 1;
+      }
+
+      @media (max-width: 375px) {
+        em-emoji-picker {
+          width: 100%;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

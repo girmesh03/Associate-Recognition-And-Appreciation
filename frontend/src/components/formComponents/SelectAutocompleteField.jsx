@@ -1,54 +1,72 @@
+// react imports
+import React from "react";
 import PropTypes from "prop-types";
-import { Controller } from "react-hook-form";
+import { useController } from "react-hook-form";
+
+// mui imports
 import { Autocomplete, TextField } from "@mui/material";
 
+// utils imports
 import renderOptionItem from "./renderOptionItem";
-import StyledListbox from "./StyledListbox";
 
 const SelectAutocompleteField = ({
   name,
-  options,
   control,
-  errors,
+  rules,
+  options,
+  trigger,
   ...otherProps
 }) => {
+  // useController
+  const {
+    field: { onChange, value, ...field },
+    formState: { errors },
+  } = useController({
+    name,
+    control,
+    rules,
+  });
+
   return (
-    <Controller
-      name={name}
-      control={control}
-      defaultValue={null}
-      rules={{
-        required: {
-          value: true,
-          message: `Please select ${name}`,
-        },
+    <Autocomplete
+      {...field}
+      options={options}
+      onChange={(event, newValue) => {
+        onChange(
+          newValue
+            ? name === "receiver"
+              ? newValue._id
+              : newValue.label
+            : null
+        );
+        if (trigger && !!errors[name]) {
+          trigger(name);
+        }
       }}
-      render={({ field: { onChange } }) => (
-        <Autocomplete
-          fullWidth
-          options={options}
-          onChange={(_, newValue) => {
-            onChange(newValue?.value || newValue?._id || "");
-          }}
-          getOptionLabel={(option) =>
-            option.value || `${option.firstName} ${option.lastName}` || ""
-          }
-          isOptionEqualToValue={(option, selectedValue) =>
-            option._id === selectedValue._id
-          }
-          renderOption={renderOptionItem(name)}
-          ListboxComponent={StyledListbox}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              {...otherProps}
-              variant="outlined"
-              size="small"
-              fullWidth
-              error={!!errors[name]}
-              helperText={errors[name]?.message}
-            />
-          )}
+      value={
+        value
+          ? options.find((option) => {
+              return name === "receiver"
+                ? option._id === value
+                : option.label === value;
+            }) ?? null
+          : null
+      }
+      getOptionLabel={(option) =>
+        option.label || `${option.firstName} ${option.lastName}` || ""
+      }
+      isOptionEqualToValue={(option, selected) => {
+        return selected ? option._id === selected._id : false;
+      }}
+      renderOption={renderOptionItem(name)}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          {...otherProps}
+          id={name}
+          name={name}
+          error={!!errors[name]}
+          helperText={errors[name]?.message}
         />
       )}
     />
@@ -58,8 +76,13 @@ const SelectAutocompleteField = ({
 SelectAutocompleteField.propTypes = {
   name: PropTypes.string.isRequired,
   control: PropTypes.object.isRequired,
-  options: PropTypes.array.isRequired,
-  errors: PropTypes.object.isRequired,
+  rules: PropTypes.object.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    })
+  ).isRequired,
+  trigger: PropTypes.func,
 };
 
-export default SelectAutocompleteField;
+export default React.memo(SelectAutocompleteField);

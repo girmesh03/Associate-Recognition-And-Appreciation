@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAsyncValue } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
+// react imports
+import { useEffect, useState, useCallback } from "react";
+import { useAsyncValue, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { toast } from "react-toastify";
 
+// mui imports
 import {
   Box,
   Card,
@@ -13,31 +13,35 @@ import {
   Typography,
   IconButton,
   Tooltip,
+  Stack,
+  Button,
 } from "@mui/material";
-
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import HomeIcon from "@mui/icons-material/Home";
+import GobackIcon from "@mui/icons-material/FirstPageOutlined";
 
+// redux imports
 import { useSelector } from "react-redux";
+
+// api imports
 import { makeRequest } from "../../api/apiRequest";
 
+// components imports
 import RecognitionMenu from "./RecognitionMenu";
 import RecognitionContent from "./RecognitionContent";
-import RecognitionMedia from "./RecognitionMedia";
-import RecognitionActions from "./RecognitionActions";
-import PostComments from "../../components/PostComments";
+import ReactMideaAlbum from "../ReactMideaAlbum";
+import PostActions from "../PostActions";
 
 const RecognitionPosts = () => {
   const { data } = useAsyncValue();
   const currentUser = useSelector((state) => state.auth.currentUser);
   const [recognitions, setRecognitions] = useState(data);
-  const [openComments, setOpenComments] = useState({});
   const navigate = useNavigate();
 
   // State for action menu
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedRecognition, setSelectedRecognition] = useState(null);
-
   const open = Boolean(anchorEl);
+  const [selectedRecognition, setSelectedRecognition] = useState(null);
 
   const handleMenuClick = useCallback((event, recognition) => {
     setAnchorEl(event.currentTarget);
@@ -49,17 +53,21 @@ const RecognitionPosts = () => {
     setSelectedRecognition(null);
   }, []);
 
-  // Handle bookmark toggle
+  const updateRecognitions = (recognitionId, updatedRecognition) => {
+    setRecognitions((prev) =>
+      prev.map((recognition) =>
+        recognitionId === recognition._id ? updatedRecognition : recognition
+      )
+    );
+  };
+
   const handleBookmarkToggle = useCallback(
     async (recognitionId) => {
       try {
         const response = await makeRequest.put(
           `/recognitions/${recognitionId}/bookmark`
         );
-        const updatedRecognitions = recognitions.map((recognition) =>
-          recognitionId === recognition._id ? response.data : recognition
-        );
-        setRecognitions(updatedRecognitions);
+        updateRecognitions(recognitionId, response.data);
         toast.success(
           response.data.savedBy.includes(currentUser._id)
             ? "Recognition saved to bookmarks!"
@@ -71,18 +79,16 @@ const RecognitionPosts = () => {
         handleMenuClose();
       }
     },
-    [currentUser, recognitions, handleMenuClose]
+    [currentUser._id, handleMenuClose]
   );
 
-  // Handle delete recognition
   const handleDeleteRecognition = useCallback(
     async (recognitionId) => {
       try {
         await makeRequest.delete(`/recognitions/${recognitionId}`);
-        const updatedRecognitions = recognitions.filter(
-          (recognition) => recognition._id !== recognitionId
+        setRecognitions((prev) =>
+          prev.filter((recognition) => recognition._id !== recognitionId)
         );
-        setRecognitions(updatedRecognitions);
         toast.success("Recognition successfully deleted!");
       } catch (error) {
         toast.error(error.response.data.message);
@@ -90,50 +96,80 @@ const RecognitionPosts = () => {
         handleMenuClose();
       }
     },
-    [recognitions, handleMenuClose]
+    [handleMenuClose]
   );
 
-  // Handle recognition like
-  const handleLike = useCallback(
-    async (recognitionId) => {
-      try {
-        const response = await makeRequest.put(
-          `/recognitions/${recognitionId}/like`
-        );
-        const updatedRecognitions = recognitions.map((recognition) =>
-          recognitionId === recognition._id ? response.data : recognition
-        );
-        setRecognitions(updatedRecognitions);
-      } catch (error) {
-        toast.error(error.response.data.message);
-      }
-    },
-    [recognitions]
-  );
-
-  const toggleCommentSection = useCallback((postId) => {
-    setOpenComments((prevState) => ({
-      ...prevState,
-      [postId]: !prevState[postId],
-    }));
+  const handleLike = useCallback(async (recognitionId) => {
+    try {
+      const response = await makeRequest.put(
+        `/recognitions/${recognitionId}/like`
+      );
+      updateRecognitions(recognitionId, response.data);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   }, []);
 
-  useEffect(() => {
-    setRecognitions(data);
-  }, [data]);
+  useEffect(() => setRecognitions(data), [data]);
 
   return (
     <Box
       sx={{
-        py: 1,
-        px: { lg: 3 },
-        maxWidth: { xs: "100%", md: "75%", lg: "100%" },
+        maxWidth: 700,
         margin: "0 auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        px: { xs: 0.5, sm: 2 },
+        py: 2,
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {recognitions?.map((recognition) => (
-          <Card variant="outlined" key={recognition?._id}>
+      {recognitions.length === 0 ? (
+        <Box
+          width={{ xs: "100%", sm: "80%" }}
+          height="70vh"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          margin="0 auto"
+          gap={4}
+          p={2}
+        >
+          <Typography variant="subtitle1" align="center">
+            No recognitions found.
+          </Typography>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            alignItems="center"
+            gap={2}
+          >
+            <Button
+              size="small"
+              variant="outlined"
+              fullWidth
+              startIcon={<HomeIcon />}
+              onClick={() => navigate("/")}
+            >
+              Go to Home
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              fullWidth
+              startIcon={<GobackIcon />}
+              onClick={() => navigate("/recognitions/create")}
+            >
+              Create Recognition
+            </Button>
+          </Stack>
+        </Box>
+      ) : (
+        recognitions.map((recognition) => (
+          <Card
+            variant="outlined"
+            key={recognition?._id}
+            sx={{ overflow: "visible", p: { xs: 0, sm: 1 } }}
+          >
             <CardHeader
               sx={{ padding: { xs: "1rem 0.75rem", sm: "1rem" } }}
               avatar={
@@ -149,36 +185,31 @@ const RecognitionPosts = () => {
               title={
                 <Typography
                   variant="body2"
-                  component="span"
-                  onClick={() =>
-                    navigate(`/profile/${recognition?.receiver?._id}`)
-                  }
                   sx={{
                     cursor: "pointer",
                     fontWeight: "bold",
-                    ":hover": {
-                      color: "secondary.main",
-                    },
+                    ":hover": { color: "secondary.main" },
                   }}
+                  onClick={() =>
+                    navigate(`/profile/${recognition?.receiver?._id}`)
+                  }
                 >
-                  {`${recognition?.receiver?.firstName} ${recognition?.receiver?.lastName}`}
+                  {`${
+                    recognition.receiver.firstName
+                  } ${recognition.receiver.lastName.charAt(0).toUpperCase()}.`}
                 </Typography>
               }
               subheader={
-                <Box>
+                <Stack direction="row" alignItems="center" spacing={1}>
                   <Typography variant="body2" component="span">
-                    {recognition?.category}
-                  </Typography>{" "}
-                  |{" "}
-                  <Tooltip
-                    title={moment(recognition?.createdAt).format("LLL")}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <Typography variant="caption" component="span">
+                    {`${recognition?.category} |`}
+                  </Typography>
+                  <Tooltip title={moment(recognition?.createdAt).format("LLL")}>
+                    <Typography variant="caption" component="span" sx={{}}>
                       {moment(recognition?.createdAt).fromNow()}
                     </Typography>
                   </Tooltip>
-                </Box>
+                </Stack>
               }
               action={
                 <IconButton
@@ -193,11 +224,10 @@ const RecognitionPosts = () => {
               }
             />
 
-            {/* RecognitionMenu Component */}
-            {selectedRecognition && (
+            {selectedRecognition?._id === recognition._id && (
               <RecognitionMenu
                 anchorEl={anchorEl}
-                open={open}
+                open={Boolean(anchorEl)}
                 handleClose={handleMenuClose}
                 recognition={selectedRecognition}
                 BookmarkToggle={handleBookmarkToggle}
@@ -206,19 +236,17 @@ const RecognitionPosts = () => {
             )}
 
             <RecognitionContent recognition={recognition} />
-            <RecognitionMedia attachments={recognition?.attachments} />
-            <RecognitionActions
-              recognition={recognition}
-              handleLike={handleLike}
-              openComment={!!openComments[recognition._id]}
-              setOpenComment={() => toggleCommentSection(recognition._id)}
-            />
-            {openComments[recognition._id] && (
-              <PostComments postId={recognition._id} postType="recognition" />
+            {recognition?.attachments?.length > 0 && (
+              <ReactMideaAlbum attachments={recognition?.attachments} />
             )}
+            <PostActions
+              post={recognition}
+              postType="recognition"
+              handleLike={handleLike}
+            />
           </Card>
-        ))}
-      </Box>
+        ))
+      )}
     </Box>
   );
 };
