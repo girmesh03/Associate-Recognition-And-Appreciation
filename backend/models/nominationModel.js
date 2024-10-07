@@ -2,24 +2,27 @@ import mongoose from "mongoose";
 
 const nominationSchema = new mongoose.Schema(
   {
-    sender: {
+    nominator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    receiver: {
+    nominee: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     category: {
       type: String,
-      enum: ["Associate of the Month", "Associate of the Year"],
-      required: true,
+      enum: {
+        values: ["Associate of the month", "Associate of the year"],
+        message: `{VALUE} is not a valid category!`,
+      },
+      required: [true, "Nomination Category is required"],
     },
-    justification: {
+    reason: {
       type: String,
-      required: true,
+      required: [true, "Please add a justification."],
       minlength: [5, "At least 5 characters are required."],
       maxlength: [500, "Maximum 500 characters allowed."],
       trim: true,
@@ -34,20 +37,32 @@ const nominationSchema = new mongoose.Schema(
       max: [100, "Allowed maximum rating is 100."],
       required: [true, "Rating is required."],
     },
-    votes: {
-      type: Number,
-      default: 0,
-    },
-    comments: [
+    votes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: "User",
       },
     ],
+    date: {
+      type: Date,
+      default: Date.now,
+    },
     savedBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
       },
     ],
   },
