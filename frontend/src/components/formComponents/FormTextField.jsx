@@ -1,89 +1,68 @@
+// react imports
+import React from "react";
+import { useController } from "react-hook-form";
 import PropTypes from "prop-types";
-import { Controller } from "react-hook-form";
+
+// mui imports
 import { TextField, InputAdornment, IconButton } from "@mui/material";
-import { AttachMoney, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const FormTextField = ({
   name,
   showPassword,
   setShowPassword,
   control,
-  errors,
-  getValues,
+  rules,
+  trigger,
   ...otherProps
 }) => {
-  const rules = {
-    required: {
-      value: true,
-      message: `Please enter your ${name}`,
-    },
-  };
-
-  switch (name) {
-    case "confirmPassword":
-      rules.validate = {
-        isMatch: (fieldValue) =>
-          fieldValue === getValues().password || "Passwords do not match",
-      };
-      break;
-    case "email":
-      rules.validate = {
-        isEmail: (fieldValue) =>
-          /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(fieldValue) ||
-          "Please enter a valid email address",
-      };
-      break;
-    default:
-      break;
-  }
+  //  useController
+  const {
+    field: { onChange, value, ...field },
+    formState: { errors },
+  } = useController({ name, control, rules });
 
   return (
-    <Controller
+    <TextField
+      {...field}
+      {...otherProps}
+      id={name}
       name={name}
-      control={control}
-      rules={rules}
-      render={({ field }) => (
-        <TextField
-          {...field}
-          {...otherProps}
-          variant="outlined"
-          fullWidth
-          size="small"
-          error={!!errors[name]}
-          helperText={errors[name]?.message}
-          InputProps={{
-            endAdornment: (name === "password" ||
-              name === "confirmPassword") && (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  edge="end"
-                >
-                  {showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            ),
-            startAdornment: name === "points" && (
-              <InputAdornment position="start">
-                <AttachMoney />
-              </InputAdornment>
-            ),
-            inputProps: name === "points" ? { min: 1 } : {},
-          }}
-        />
-      )}
+      variant="outlined"
+      fullWidth
+      size="small"
+      value={value}
+      onChange={(event) => {
+        onChange(event.target.value);
+        if (trigger && !!errors[name]) {
+          trigger(name);
+        }
+      }}
+      error={!!errors[name]}
+      helperText={errors[name]?.message}
+      InputProps={{
+        endAdornment: (name === "password" || name === "confirmPassword") && (
+          <InputAdornment position="end">
+            <IconButton
+              onClick={() => setShowPassword((prev) => !prev)}
+              edge="end"
+            >
+              {showPassword ? <Visibility /> : <VisibilityOff />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
     />
   );
 };
 
 FormTextField.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  control: PropTypes.object.isRequired,
+  rules: PropTypes.object.isRequired,
+  trigger: PropTypes.func,
   showPassword: PropTypes.bool,
   setShowPassword: PropTypes.func,
-  control: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired,
-  getValues: PropTypes.func,
 };
 
-export default FormTextField;
+export default React.memo(FormTextField);
