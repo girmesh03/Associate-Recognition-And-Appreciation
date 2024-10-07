@@ -1,13 +1,9 @@
+// react imports
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-// import moment from "moment";
-import {
-  CardContent,
-  Typography,
-  Chip,
-  IconButton,
-  Divider,
-} from "@mui/material";
+
+// mui imports
+import { CardContent, Typography, Chip, IconButton } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
@@ -76,14 +72,6 @@ const RecognitionContent = ({ recognition }) => {
           </IconButton>
         )}
       </Typography>
-
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        sx={{ mt: 2 }}
-      ></Typography>
-
-      <Divider />
     </CardContent>
   );
 };
@@ -102,7 +90,6 @@ RecognitionContent.propTypes = {
     reason: PropTypes.string.isRequired,
     pointsAwarded: PropTypes.number,
     isAnonymous: PropTypes.bool.isRequired,
-    // date: PropTypes.string.isRequired,
   }).isRequired,
 };
 
