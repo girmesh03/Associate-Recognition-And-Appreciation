@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { attachmentSchema } from "./reusableSchemas.js";
 
 const nominationSchema = new mongoose.Schema(
   {
@@ -38,15 +37,6 @@ const nominationSchema = new mongoose.Schema(
     votes: {
       type: Number,
       default: 0,
-    },
-    attachments: {
-      type: [attachmentSchema],
-      validate: {
-        validator: function (v) {
-          return v.length <= 2;
-        },
-        message: (props) => `You can upload a maximum of 2 files!`,
-      },
     },
     comments: [
       {
