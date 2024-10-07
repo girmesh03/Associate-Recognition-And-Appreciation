@@ -194,7 +194,6 @@ export const themeSettings = (mode) => {
               mode === "light"
                 ? "linear-gradient(180deg, #CEE5FD, #FFF)"
                 : `linear-gradient(#02294F, ${alpha("#090E10", 0.0)})`,
-            backgroundSize: "100% 40%",
             backgroundRepeat: "no-repeat",
           },
         },
@@ -495,7 +494,7 @@ export const themeSettings = (mode) => {
             backgroundImage: "none",
             backgroundColor: gray[100],
             ...(theme.palette.mode === "dark" && {
-              backgroundColor: alpha(gray[900], 0.6),
+              backgroundColor: gray[800],
             }),
           }),
         },
@@ -504,7 +503,7 @@ export const themeSettings = (mode) => {
         styleOverrides: {
           root: ({ theme }) => ({
             boxSizing: "border-box",
-            width: 36,
+            width: 44,
             height: 24,
             padding: 0,
             transition: "background-color 100ms ease-in",
@@ -515,7 +514,7 @@ export const themeSettings = (mode) => {
             },
             "& .MuiSwitch-switchBase": {
               "&.Mui-checked": {
-                transform: "translateX(13px)",
+                transform: "translateX(20px)",
               },
             },
             "& .MuiSwitch-track": {
@@ -529,7 +528,7 @@ export const themeSettings = (mode) => {
               margin: 2,
             },
             ...(theme.palette.mode === "dark" && {
-              width: 36,
+              width: 44,
               height: 24,
               padding: 0,
               transition: "background-color 100ms ease-in",
@@ -540,7 +539,7 @@ export const themeSettings = (mode) => {
               },
               "& .MuiSwitch-switchBase": {
                 "&.Mui-checked": {
-                  transform: "translateX(13px)",
+                  transform: "translateX(20px)",
                 },
               },
               "& .MuiSwitch-thumb": {
@@ -603,7 +602,7 @@ export const themeSettings = (mode) => {
                 outline: "4px solid",
                 outlineColor: brand[200],
               },
-              [theme.breakpoints.down(375)]: {
+              [theme.breakpoints.down(600)]: {
                 minWidth: "auto",
               },
             },
@@ -630,7 +629,7 @@ export const themeSettings = (mode) => {
                   outline: "4px solid",
                   outlineColor: alpha(brand[500], 0.5),
                 },
-                [theme.breakpoints.down(375)]: {
+                [theme.breakpoints.down(600)]: {
                   minWidth: "auto",
                 },
               },
