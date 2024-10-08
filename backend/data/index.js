@@ -1,110 +1,27 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import Users from "../models/userModel.js";
 import Recognitions from "../models/recognitionModel.js";
+import Nominations from "../models/nominationModel.js";
 
-const usersData = [
-  {
-    firstName: "Girma",
-    lastName: "Zewdie",
-    department: "Engineering",
-    position: "Engineer",
-    email: "girma@gmail.com",
-    password: "12345",
-    role: "admin",
-  },
-  {
-    firstName: "Beza",
-    lastName: "Ayalew",
-    department: "Marketing",
-    position: "Manager",
-    email: "beza@gmail.com",
-    password: "12345",
-    role: "user",
-  },
-  {
-    firstName: "Henock",
-    lastName: "Mathew",
-    department: "Finance",
-    position: "Accountant",
-    email: "henock@gmail.com",
-    password: "12345",
-    role: "user",
-  },
-  {
-    firstName: "Mesay",
-    lastName: "Abera",
-    department: "Human Resources",
-    position: "HR Coordinator",
-    email: "mesay@gmail.com",
-    password: "12345",
-    role: "user",
-  },
-  {
-    firstName: "Ermias",
-    lastName: "Tegene",
-    department: "Food and Beverage",
-    position: "Restaurant Manager",
-    email: "ermias@gmail.com",
-    password: "12345",
-    role: "user",
-  },
-];
+// Import mock data
+import { usersData, recognitionsData, nominationsData } from "./fakeData.js";
 
-const RecognitionData = [
-  {
-    sender: "",
-    receiver: "",
-    reason: "Exceptional collaboration efforts in achieving team goals.",
-    pointsAwarded: 5,
-    category: "Top Performer",
-    isAnonymous: false,
-    attachments: [],
-  },
-  {
-    sender: "",
-    receiver: "",
-    reason: "Outstanding leadership demonstrated during a challenging project.",
-    pointsAwarded: 12,
-    category: "Team Player",
-    isAnonymous: false,
-    attachments: [],
-  },
-  {
-    sender: "",
-    receiver: "",
-    reason:
-      "Remarkable problem-solving skills displayed in resolving critical issues.",
-    pointsAwarded: 10,
-    category: "Customer Champion",
-    isAnonymous: true,
-    attachments: [],
-  },
-  {
-    sender: "",
-    receiver: "",
-    reason:
-      "Consistent dedication to achieving project milestones ahead of schedule.",
-    pointsAwarded: 75,
-    category: "Rising Star",
-    isAnonymous: true,
-    attachments: [],
-  },
-  {
-    sender: "",
-    receiver: "",
-    category: "Leadership Excellence",
-    reason:
-      "Innovative approach to problem-solving leading to significant cost savings.",
-    pointsAwarded: 100,
-    isAnonymous: false,
-    attachments: [],
-  },
-];
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
+  });
 
-const InsertManyUsers = async () => {
+const InsertUsersData = async () => {
   try {
-    await Users.deleteMany({});
-
     // Insert users without passwords
     const insertedUsers = await Users.insertMany(usersData);
 
@@ -121,7 +38,7 @@ const InsertManyUsers = async () => {
               password: hashedPassword,
               profilePicture:
                 "http://localhost:4000/uploads/default/noAvatar.webp",
-              coverPicturePicture:
+              coverPicture:
                 "http://localhost:4000/uploads/default/noCover.webp",
             },
           },
@@ -138,17 +55,17 @@ const InsertManyUsers = async () => {
   }
 };
 
-const InsertManyRecognitionData = async () => {
+const InsertRecognitionsData = async () => {
   try {
     await Recognitions.deleteMany({});
     const users = await Users.find({}, "_id");
 
-    if (users.length < RecognitionData.length) {
+    if (users.length < recognitionsData.length) {
       console.error("Not enough users to assign recognitions.");
       return;
     }
 
-    const recognitionDataWithUserIds = RecognitionData.map(
+    const recognitionDataWithUserIds = recognitionsData.map(
       (recognition, index) => ({
         ...recognition,
         sender: users[index]._id,
@@ -196,4 +113,93 @@ const InsertManyRecognitionData = async () => {
   }
 };
 
-export { InsertManyUsers, InsertManyRecognitionData };
+const InsertNominationsData = async () => {
+  try {
+    await Nominations.deleteMany({}); // Clear existing nominations
+    const users = await Users.find({}, "_id"); // Fetch user IDs
+
+    if (users.length < nominationsData.length) {
+      console.error("Not enough users to assign nominations.");
+      return;
+    }
+
+    // Mapping nomination data with random values for category, isAnonymous, rating, and votes
+    const nominationDataWithUserIds = nominationsData.map(
+      (nomination, index) => ({
+        ...nomination,
+        nominator: users[index]._id, // Assign a nominator from the users
+        nominee: users[(index + 1) % users.length]._id, // Assign a nominee (next user in the list)
+        votes: [users[Math.floor(Math.random() * users.length)]._id], // Random user voting
+      })
+    );
+
+    // Insert nominations into the database
+    const insertedNominations = await Nominations.insertMany(
+      nominationDataWithUserIds
+    );
+
+    // Optionally update user stats (sent and received nominations)
+    await Promise.all(
+      insertedNominations.map(async (nomination) => {
+        const nomineeId = nomination.nominee;
+
+        await Promise.all([
+          Users.findByIdAndUpdate(
+            nomineeId,
+            { $inc: { "nominations.count": 1 } }, // Increment nominations count
+            { new: true }
+          ),
+        ]);
+      })
+    );
+
+    console.log("InsertManyNominationData: Nominations imported successfully");
+  } catch (error) {
+    console.error("InsertManyNominationData: Error importing data", error);
+  }
+};
+
+const DeleteData = async () => {
+  try {
+    await Users.deleteMany({});
+    await Recognitions.deleteMany({});
+    await Nominations.deleteMany({});
+
+    console.log("Data deleted successfully");
+  } catch (error) {
+    console.error("Error deleting data:", error);
+  }
+  process.exit();
+};
+
+const InsertData = async () => {
+  try {
+    // Delete existing data
+    await Users.deleteMany({});
+    await Recognitions.deleteMany({});
+    await Nominations.deleteMany({});
+
+    // Insert new data
+    await Promise.all([
+      InsertUsersData(),
+      InsertRecognitionsData(),
+      InsertNominationsData(),
+    ]);
+
+    console.log("Data inserted successfully");
+  } catch (error) {
+    console.error("Error inserting data:", error);
+  }
+
+  // Exit the process
+  process.exit();
+};
+
+if (process.argv[2] === "--delete") {
+  DeleteData();
+} else if (process.argv[2] === "--import") {
+  InsertData();
+} else {
+  console.log("Please specify --delete or --import");
+  process.exit();
+}

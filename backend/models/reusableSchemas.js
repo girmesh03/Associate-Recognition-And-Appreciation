@@ -12,14 +12,4 @@ const attachmentSchema = new mongoose.Schema({
   thumbnail: { type: String, required: false },
 });
 
-// Reusable Import Status Schema
-const importStatusSchema = new mongoose.Schema({
-  imported: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const ImportDataStatus = mongoose.model("ImportDataStatus", importStatusSchema);
-
-export { attachmentSchema, ImportDataStatus };
+export { attachmentSchema };

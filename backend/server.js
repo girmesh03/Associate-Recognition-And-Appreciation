@@ -8,10 +8,6 @@ import app from "./app.js";
 import connectDB from "./config/db.js";
 import corsOptions from "./config/corsOptions.js";
 
-// Import fake data
-import { ImportDataStatus } from "./models/reusableSchemas.js";
-import { ImportData } from "./data/fakeData.js";
-
 const PORT = process.env.PORT || 5000;
 
 // Create HTTP server
@@ -36,16 +32,6 @@ connectDB();
 
 mongoose.connection.once("open", async () => {
   console.log("Connected to MongoDB");
-
-  // Initialize import status if it doesn't exist
-  const existingStatus = await ImportDataStatus.findOne();
-  if (!existingStatus) {
-    await ImportDataStatus.create({ imported: false });
-  }
-
-  // Call import function
-  await ImportData();
-
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
 

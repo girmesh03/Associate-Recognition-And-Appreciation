@@ -1,24 +1,146 @@
-import { InsertManyUsers, InsertManyRecognitionData } from "./index.js";
-import { ImportDataStatus } from "../models/reusableSchemas.js";
+export const usersData = [
+  {
+    firstName: "Girma",
+    lastName: "Zewdie",
+    department: "Engineering",
+    position: "Engineer",
+    email: "girma@gmail.com",
+    password: "12345",
+    role: "admin",
+  },
+  {
+    firstName: "Beza",
+    lastName: "Ayalew",
+    department: "Marketing",
+    position: "Manager",
+    email: "beza@gmail.com",
+    password: "12345",
+    role: "user",
+  },
+  {
+    firstName: "Henock",
+    lastName: "Mathew",
+    department: "Finance",
+    position: "Accountant",
+    email: "henock@gmail.com",
+    password: "12345",
+    role: "user",
+  },
+  {
+    firstName: "Mesay",
+    lastName: "Abera",
+    department: "Human Resources",
+    position: "HR Coordinator",
+    email: "mesay@gmail.com",
+    password: "12345",
+    role: "user",
+  },
+  {
+    firstName: "Ermias",
+    lastName: "Tegene",
+    department: "Food and Beverage",
+    position: "Restaurant Manager",
+    email: "ermias@gmail.com",
+    password: "12345",
+    role: "user",
+  },
+];
 
-export const ImportData = async () => {
-  const status = await ImportDataStatus.findOne();
+export const recognitionsData = [
+  {
+    sender: "",
+    receiver: "",
+    reason: "Exceptional collaboration efforts in achieving team goals.",
+    pointsAwarded: 5,
+    category: "Top Performer",
+    isAnonymous: false,
+    attachments: [],
+  },
+  {
+    sender: "",
+    receiver: "",
+    reason: "Outstanding leadership demonstrated during a challenging project.",
+    pointsAwarded: 12,
+    category: "Team Player",
+    isAnonymous: false,
+    attachments: [],
+  },
+  {
+    sender: "",
+    receiver: "",
+    reason:
+      "Remarkable problem-solving skills displayed in resolving critical issues.",
+    pointsAwarded: 10,
+    category: "Customer Champion",
+    isAnonymous: true,
+    attachments: [],
+  },
+  {
+    sender: "",
+    receiver: "",
+    reason:
+      "Consistent dedication to achieving project milestones ahead of schedule.",
+    pointsAwarded: 75,
+    category: "Rising Star",
+    isAnonymous: true,
+    attachments: [],
+  },
+  {
+    sender: "",
+    receiver: "",
+    category: "Leadership Excellence",
+    reason:
+      "Innovative approach to problem-solving leading to significant cost savings.",
+    pointsAwarded: 100,
+    isAnonymous: false,
+    attachments: [],
+  },
+];
 
-  if (!status || !status.imported) {
-    console.log("Importing data...");
-    await InsertManyUsers();
-    await InsertManyRecognitionData();
-
-    // Create or update the import status
-    if (status) {
-      status.imported = true;
-      await status.save();
-    } else {
-      await ImportDataStatus.create({ imported: true });
-    }
-
-    console.log("Data imported successfully");
-  } else {
-    console.log("Data has already been imported. Skipping import.");
-  }
-};
+export const nominationsData = [
+  {
+    nominator: "",
+    nominee: "",
+    category: "Associate of the month",
+    reason: "Outstanding contribution to team collaboration.",
+    isAnonymous: true,
+    rating: 1,
+    votes: [],
+  },
+  {
+    nominator: "",
+    nominee: "",
+    category: "Associate of the year",
+    reason: "Excellent performance and leadership throughout the year.",
+    isAnonymous: false,
+    rating: 92,
+    votes: [],
+  },
+  {
+    nominator: "",
+    nominee: "",
+    category: "Associate of the month",
+    reason: "Exceptional support during critical project deadlines.",
+    isAnonymous: false,
+    rating: 78,
+    votes: [],
+  },
+  {
+    nominator: "",
+    nominee: "",
+    category: "Associate of the year",
+    reason: "Consistently innovative ideas that benefited the team.",
+    isAnonymous: true,
+    rating: 100,
+    votes: [],
+  },
+  {
+    nominator: "",
+    nominee: "",
+    category: "Associate of the month",
+    reason: "Demonstrated exceptional problem-solving skills.",
+    isAnonymous: false,
+    rating: 90,
+    votes: [],
+  },
+];
