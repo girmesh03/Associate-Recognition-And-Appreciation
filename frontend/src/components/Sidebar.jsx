@@ -114,6 +114,7 @@ const protectedNavListItems = [
         name: "Create Recognition",
         title: "Create",
         path: "recognitions/create",
+        icon: <AddCircleIcon />,
       },
     ],
   },
@@ -221,9 +222,7 @@ const Sidebar = () => {
                               "&:hover": { bgcolor: "success.light" },
                             }}
                           >
-                            <ListItemIcon>
-                              <AddCircleIcon />
-                            </ListItemIcon>
+                            <ListItemIcon>{subItem.icon}</ListItemIcon>
                             <ListItemText primary={subItem.name} />
                           </ListItemButton>
                         ))}
